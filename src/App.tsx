@@ -1,5 +1,5 @@
-import { Shoe } from './types';
 import Shoes from './components/Shoes'
+import ShoeForm from './components/ShoeForm'
 import { useEffect } from 'react';
 import { useStateValue } from "./state";
 import ShoeServices from './services/shoes'
@@ -25,12 +25,12 @@ function App() {
   return (
     <Router>
         <main>
-          <Link to="/">
-          <button></button>
-          </Link>
+          <Link to="/"><button>Home</button></Link>
+          <Link to="/createShoe"><button>Form</button></Link>
 
           <Routes>
             <Route path="/" element={<Shoes />} />
+            <Route path="/createShoe" element={<ShoeForm />} />
           </Routes>
         </main>
       </Router>

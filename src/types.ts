@@ -8,6 +8,8 @@ export interface Shoe {
 }
 
 export interface Size {
+  [key: string]: string | number;
+
   id: string;
   size: number;
   quantity: number;
@@ -18,3 +20,6 @@ export enum Gender {
   FEMALE = 'female',
   UNISEX = 'unisex'
 }
+
+export type OnlyShoeData = Omit<Shoe, "id" | "sizes">
+export type OnlySizesData = Omit<Size, 'id'>
