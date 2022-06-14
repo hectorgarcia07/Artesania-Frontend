@@ -48,3 +48,4 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 usefull sources
 https://bobbyhadz.com/blog/typescript-extend-interface-exclude-property
 https://www.freecodecamp.org/news/build-dynamic-forms-in-react/
+https://jasonwatmore.com/post/2020/09/28/react-formik-dynamic-form-example

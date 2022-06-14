@@ -1,120 +1,115 @@
-import useForm from '../hooks/useForm'
-import useShoeSizes from '../hooks/useShoeSizes'
-import { OnlyShoeData, Gender } from '../types'
+import { Formik, Field, Form, ErrorMessage,FieldArray } from 'formik';
+import { ShoeData, Gender, OnlySizesData } from '../types'
+import * as Yup from 'yup';
 
 const ShoeForm = () => {
-  const initialState:OnlyShoeData = {
+  const initialValue:ShoeData = {
     name: "",
     color: "",
     price: 0,
     gender: Gender.MALE,
+    sizes: [{
+      size: 0,
+      quantity: 0
+    }]
   }
 
-  const submitData = async (event:React.FormEvent<HTMLFormElement>) => {
-    onSubmit(event, sizes)
-    return 
+  Yup.addMethod(Yup.array, 'unique', function(message) {
+    return this.test('unique', message, function(list) {
+      const sizesSet = new Set(list?.map(value => value.size))
+      return list!.length  === sizesSet.size;
+    });
+});
+  
+  const validationSchema = Yup.object().shape({
+    name: Yup.string()
+      .required('Name is required'),
+    color: Yup.string()
+      .required('Color is required'),
+    price: Yup.number().moreThan(0)
+      .required('A price is required'),
+    gender: Yup.string()
+      .required('Selected a gender'),
+    sizes: Yup.array().of(
+      Yup.object().shape({
+        size: Yup.number().moreThan(0)
+          .required('A size is required'),
+        quantity: Yup.number()
+          .required('A quantity is required')
+    })).unique('Cannot have duplicate size')
+  })
+
+  //creates a new obj to represent a size
+  const createNewSize = (values:ShoeData, setValues:any) => {
+    const newSizeArr:OnlySizesData[] = [...values.sizes]
+    newSizeArr.push({size: 0, quantity: 0})
+    setValues({...values, sizes: newSizeArr})
   }
 
-  const {
-    shoeValues, onChange, onSubmit
-  } = useForm(submitData, initialState)
+  //remvoes an size from the array
+  const removeSize = (index:number, values:ShoeData, setValues:any) => {
+    const newSizeArr:OnlySizesData[] = [...values.sizes]
+    newSizeArr.splice(index, 1)
+    setValues({...values, sizes: newSizeArr})
+  }
 
-  const {
-    sizes, handleShoeSizeChange, addNewShoeSize, removeSize
-  } = useShoeSizes()
+  const onSubmit = (fields:ShoeData) => {
+    console.log(fields)
+  }
 
   return (
-    <form onSubmit={submitData}>
-      <div>
-        <label>
-          Name:
-          <input
-            name='name'
-            type='text'
-            value={shoeValues.name}
-            placeholder='name'
-            onChange={onChange}
-            required
-          />
-        </label>
-        <label>
-          Color:
-          <input
-            name='color'
-            id='color'
-            type='text'
-            placeholder='Color'
-            value={shoeValues.color}
-            onChange={onChange}
-            required
-          />
-        </label>
-        <label>
-          Price:
-          $<input
-            name='price'
-            id='price'
-            type='number'
-            value={shoeValues.price}
-            placeholder='Price'
-            onChange={onChange}
-            required
-          />
-        </label>
-        <h3>Gender</h3>
-        <label>
-          <input 
-            name="gender" 
-            type="radio" 
-            value={Gender.MALE} 
-            onChange={onChange} 
-            checked={shoeValues.gender === Gender.MALE} />
-          Male
-        </label>
-        <label>
-          <input 
-            name="gender" 
-            type="radio" 
-            value={Gender.FEMALE} 
-            onChange={onChange} 
-            checked={shoeValues.gender === Gender.FEMALE}/>
-          Female
-        </label>
-        <label>
-          <input 
-            name="gender" 
-            type="radio" 
-            value={Gender.UNISEX} 
-            onChange={onChange} 
-            checked={shoeValues.gender === Gender.UNISEX}/>
-          Unixex
-        </label>
-        <div>
-          Sizes:
-          {sizes.map( (size, index) => (
-            <div key={index}>
-              <input 
-                type="number" 
-                value={size.size} 
-                name="size" 
-                onChange={(e) => handleShoeSizeChange(index,e)}
-                required
-              />
-              <input 
-                type="number" 
-                value={size.quantity} 
-                name="quantity" 
-                onChange={(e) => handleShoeSizeChange(index,e)}
-                required
-              />
-              <button onClick={() => removeSize(index)}>Remove</button>
-            </div>
-          ))}
-          <button onClick={addNewShoeSize}>Add new size</button>
-        </div>
-        <button type='submit'>Submit</button>
-      </div>
-    </form>
+    <Formik initialValues={initialValue} validationSchema={validationSchema} onSubmit={onSubmit}>
+      {({ errors, values, touched, setValues }) => (
+        
+        <Form>
+          <label htmlFor="name">Name</label>
+          <Field name="name" type="text" />
+          <ErrorMessage name="name" />
+
+          <label htmlFor="color">Color</label>
+          <Field name="color" type="text" />
+          <ErrorMessage name="color" />
+
+          <label htmlFor="price">Price</label>
+          <Field name="price" type="number" />
+          <ErrorMessage name="price" />
+
+          <Field name="gender" as="select" className="">
+            <option value={Gender.MALE}>Male</option>
+            <option value={Gender.FEMALE}>Female</option>
+            <option value={Gender.UNISEX}>Unisex</option>
+          </Field>
+          <ErrorMessage name="gender" />
+
+          <FieldArray name="sizes">
+            {() => (values.sizes.map((size, i) => {
+              const ticketErrors = errors.sizes?.length && errors.sizes[i] || {};
+              const ticketTouched = touched.sizes?.length && touched.sizes[i] || {};
+
+              return(
+                <div key={i}>
+                  <div className="form-group col-6">
+                    <label>Size</label>
+                    <Field name={`sizes.${i}.size`} type="number" />
+                    <ErrorMessage name={`sizes.${i}.size`} component="div" className="invalid-feedback">
+                      {msg => <div>Size must be greater than 0</div>}
+                    </ErrorMessage>
+                  </div>
+                  <div className="form-group col-6">
+                    <label>Quantity</label>
+                    <Field name={`sizes.${i}.quantity`} type="number" />
+                    <ErrorMessage name={`sizes.${i}.quantity`} component="div" className="invalid-feedback" />
+                  </div>
+                  <button onClick={() => removeSize(i, values, setValues)}>Remove</button>
+                </div>
+              )
+              }))}
+          </FieldArray>
+          <button onClick={() => createNewSize(values, setValues)}>Add new size</button>
+          <button>Submit</button>
+        </Form>
+      )}
+    </Formik>
   )
 }
 

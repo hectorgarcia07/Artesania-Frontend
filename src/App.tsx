@@ -1,9 +1,9 @@
 import Shoes from './components/Shoes'
-import ShoeForm from './components/ShoeForm'
 import { useEffect } from 'react';
 import { useStateValue } from "./state";
 import ShoeServices from './services/shoes'
 import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
+import FormLink from './components/ShoeForm';
 
 //import Shoes from './components/Shoes'
 function App() {
@@ -30,7 +30,7 @@ function App() {
 
           <Routes>
             <Route path="/" element={<Shoes />} />
-            <Route path="/createShoe" element={<ShoeForm />} />
+            <Route path="/createShoe" element={<FormLink />} />
           </Routes>
         </main>
       </Router>

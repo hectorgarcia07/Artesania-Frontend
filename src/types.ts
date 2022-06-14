@@ -3,7 +3,7 @@ export interface Shoe {
   name: string;
   color: string;
   price: number;
-  gender: Gender;
+  gender: Gender | null;
   sizes: Array<Size>;
 }
 
@@ -23,3 +23,6 @@ export enum Gender {
 
 export type OnlyShoeData = Omit<Shoe, "id" | "sizes">
 export type OnlySizesData = Omit<Size, 'id'>
+export interface ShoeData extends OnlyShoeData{
+  sizes: Omit<Size, 'id'>[]
+}
