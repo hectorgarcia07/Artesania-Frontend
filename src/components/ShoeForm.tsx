@@ -1,6 +1,7 @@
-import { Formik, Field, Form, ErrorMessage,FieldArray } from 'formik';
+import { Formik, Field, Form, ErrorMessage,FieldArray, FormikErrors } from 'formik';
 import { ShoeData, Gender, OnlySizesData } from '../types'
 import * as Yup from 'yup';
+
 
 const ShoeForm = () => {
   const initialValue:ShoeData = {
@@ -13,13 +14,6 @@ const ShoeForm = () => {
       quantity: 0
     }]
   }
-
-  Yup.addMethod(Yup.array, 'unique', function(message) {
-    return this.test('unique', message, function(list) {
-      const sizesSet = new Set(list?.map(value => value.size))
-      return list!.length  === sizesSet.size;
-    });
-});
   
   const validationSchema = Yup.object().shape({
     name: Yup.string()
@@ -36,7 +30,12 @@ const ShoeForm = () => {
           .required('A size is required'),
         quantity: Yup.number()
           .required('A quantity is required')
-    })).unique('Cannot have duplicate size')
+          .moreThan(-1)
+    })).min(1).test("Unique", "Sizes must be unique", values => {
+      const sizesSet = new Set(values?.map(value => value.size))
+      console.log("SizeSet: ", sizesSet, "valuesLeng", values)
+      return values!.length  === sizesSet.size  })
+
   })
 
   //creates a new obj to represent a size
@@ -55,6 +54,11 @@ const ShoeForm = () => {
 
   const onSubmit = (fields:ShoeData) => {
     console.log(fields)
+  }
+
+  const stuff = (e: FormikErrors<ShoeData>) => {
+    console.log(e)
+    return <></>
   }
 
   return (
@@ -81,11 +85,10 @@ const ShoeForm = () => {
           </Field>
           <ErrorMessage name="gender" />
 
+          {stuff(errors)}
+          {errors.sizes && touched.sizes ? (<div>Sizes must be unique</div>) : null}
           <FieldArray name="sizes">
             {() => (values.sizes.map((size, i) => {
-              const ticketErrors = errors.sizes?.length && errors.sizes[i] || {};
-              const ticketTouched = touched.sizes?.length && touched.sizes[i] || {};
-
               return(
                 <div key={i}>
                   <div className="form-group col-6">
@@ -98,7 +101,9 @@ const ShoeForm = () => {
                   <div className="form-group col-6">
                     <label>Quantity</label>
                     <Field name={`sizes.${i}.quantity`} type="number" />
-                    <ErrorMessage name={`sizes.${i}.quantity`} component="div" className="invalid-feedback" />
+                    <ErrorMessage name={`sizes.${i}.quantity`} component="div" className="invalid-feedback">
+                      {msg => <div>Quantity must be greater than 0</div>}
+                    </ErrorMessage>
                   </div>
                   <button onClick={() => removeSize(i, values, setValues)}>Remove</button>
                 </div>
