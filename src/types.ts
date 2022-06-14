@@ -1,9 +1,12 @@
+import { AxiosResponse } from "axios"
+
 export interface Shoe {
   id: string;
   name: string;
   color: string;
   price: number;
   gender: Gender | null;
+  age: Age | null;
   sizes: Array<Size>;
 }
 
@@ -15,6 +18,11 @@ export interface Size {
   quantity: number;
 }
 
+export enum Age {
+  ADULT = 'adult',
+  KID = 'kid',
+}
+
 export enum Gender {
   MALE = 'male',
   FEMALE = 'female',
@@ -23,6 +31,11 @@ export enum Gender {
 
 export type OnlyShoeData = Omit<Shoe, "id" | "sizes">
 export type OnlySizesData = Omit<Size, 'id'>
+
 export interface ShoeData extends OnlyShoeData{
   sizes: Omit<Size, 'id'>[]
+}
+
+export interface FormError {
+  error: AxiosResponse<any, any> | undefined
 }

@@ -7,6 +7,7 @@ const ShoeList = ({shoe}:{shoe: Shoe} ) => {
       <p>Color: {shoe.color}</p>
       <p>Price: {shoe.price}</p>
       <p>Gender: {shoe.gender}</p>
+      <p>Age: {shoe.age}</p>
       <ul>
         {shoe.sizes.map(size => <li key={size.id}>{size.size} {size.quantity}</li>)}
       </ul>

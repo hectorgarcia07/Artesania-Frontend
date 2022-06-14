@@ -7,12 +7,13 @@ import FormLink from './components/ShoeForm';
 
 //import Shoes from './components/Shoes'
 function App() {
-  const [state, dispatch] = useStateValue();
+  const [, dispatch] = useStateValue();
+
   useEffect(() => {
     const fetchPatientList = async () => {
       try {
         const shoeListFromApi = await ShoeServices.getAll();
-        console.log(shoeListFromApi);
+        console.log("ShoeListAPI", shoeListFromApi);
         dispatch({ type: "SET_SHOE_LIST", payload: shoeListFromApi });
       } catch (e) {
         console.error(e);
@@ -21,7 +22,6 @@ function App() {
     void fetchPatientList();
   }, [dispatch]);
 
-  console.log("STATE:", state)
   return (
     <Router>
         <main>
