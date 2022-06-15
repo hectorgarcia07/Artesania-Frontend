@@ -1,31 +1,17 @@
 /* eslint-disable no-extra-boolean-cast */
-import { useState } from 'react';
 import { Formik, Field, Form, ErrorMessage,FieldArray } from 'formik';
-import { ShoeData, Gender, OnlySizesData, FormError,Age } from '../types'
+import { ShoeData, Gender, OnlySizesData, FormError,Age } from '../../types'
 import * as Yup from 'yup';
 import { SetStateAction } from 'react';
-import ShoeServices from '../services/shoes'
-import { useNavigate } from 'react-router';
-import { useStateValue } from "../state";
 
-const ShoeForm = () => {
-  const [, dispatch] = useStateValue()
-  const navigate = useNavigate()
-  const [submitState, setSubmitState] = useState<FormError>({
-    error: undefined
-  })
-  const initialValue:ShoeData = {
-    name: "",
-    color: "",
-    price: 0,
-    gender: Gender.MALE,
-    age: Age.ADULT,
-    sizes: [{
-      size: 0,
-      quantity: 0
-    }]
-  }
-  
+interface SheFormProp{
+  submitState: FormError, 
+  onSubmit: (fields: ShoeData) => Promise<void>,
+  data: ShoeData | null
+}
+
+const ShoeForm = ({submitState, onSubmit, data}:SheFormProp) => {
+  console.log("Shoe form", onSubmit)
   const validationSchema = Yup.object().shape({
     name: Yup.string()
       .required('Name is required'),
@@ -50,6 +36,27 @@ const ShoeForm = () => {
 
   })
 
+  let initialValue:ShoeData;
+
+  //make a new initial value or make a copy of the passed data to edit.
+  if(data == null){
+    initialValue = {
+      name: "",
+      color: "",
+      price: 0,
+      gender: Gender.MALE,
+      age: Age.ADULT,
+      sizes: [{
+        size: 0,
+        quantity: 0
+      }]
+    }
+  }else{
+    initialValue = {
+      ...data,
+      sizes: data.sizes.map(size => ({...size}))
+    }
+  }
   //creates a new obj to represent a size
   const createNewSize = (values:ShoeData, setValues: { (values: SetStateAction<ShoeData>, shouldValidate?: boolean | undefined): void; (arg0: { sizes: OnlySizesData[]; name: string; color: string; price: number; gender: Gender | null; age: Age | null; }): void; }) => {
     const newSizeArr:OnlySizesData[] = [...values.sizes]
@@ -62,20 +69,6 @@ const ShoeForm = () => {
     const newSizeArr:OnlySizesData[] = [...values.sizes]
     newSizeArr.splice(index, 1)
     setValues({...values, sizes: newSizeArr})
-  }
-
-  const onSubmit = async(fields:ShoeData) => {
-    const response = await ShoeServices.createShoeEntry(fields)
-    console.log("RESPONSE", response)
-
-    if(response.status === 201){
-      dispatch({ type: "ADD_SHOE", payload: response.data })
-      navigate('/')
-    }
-
-    setSubmitState({
-      error: response
-    })
   }
 
   return (
@@ -108,9 +101,10 @@ const ShoeForm = () => {
             <option value={Age.KID}>Kid</option>
           </Field>
           <ErrorMessage name="age" />
-
+          
           {errors.sizes && touched.sizes ? (<div>Sizes must be unique</div>) : null}
           <FieldArray name="sizes">
+            
             {() => (values.sizes.map((size, i) => {
               return(
                 <div key={i}>

@@ -1,6 +1,10 @@
 import { Shoe } from '../types'
+import { Link } from 'react-router-dom'
+import { useStateValue } from '../state';
 
 const ShoeList = ({shoe}:{shoe: Shoe} ) => {
+  const [state,] = useStateValue();
+
   return (
     <div>
       <h1>{shoe.name}</h1>
@@ -11,6 +15,10 @@ const ShoeList = ({shoe}:{shoe: Shoe} ) => {
       <ul>
         {shoe.sizes.map(size => <li key={size.id}>{size.size} {size.quantity}</li>)}
       </ul>
+      <Link to={`/updateShoe/${shoe.id}`}>
+        <button>Update</button>
+      </Link>
+      
     </div>
   )
 }

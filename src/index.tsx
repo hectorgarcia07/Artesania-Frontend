@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-
+import { BrowserRouter as Router } from 'react-router-dom';
 import { reducer, StateProvider } from "./state";
 
 const root = ReactDOM.createRoot(
@@ -9,6 +9,8 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <StateProvider reducer={reducer}>
-    <App />
+     <Router>
+      <App />
+    </Router>
   </StateProvider>
 );

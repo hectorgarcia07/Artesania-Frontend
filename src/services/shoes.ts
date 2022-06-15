@@ -25,13 +25,14 @@ const createShoeEntry = async (shoeObj:ShoeData) => {
     return e
   }
 }
-/*
-const update = (id, newObject) => {
-  const request = axios.put(`${baseUrl}/${id}`, newObject)
-  return request.then(response => response.data)
+
+const updateShoeEntry = async (id:string, newObject:ShoeData) => {
+  const response = await axios.put(`${baseUrl}/${id}`, newObject)
+  return response
 }
- */
+
 export default { 
   getAll,
-  createShoeEntry
+  createShoeEntry,
+  updateShoeEntry
 }
