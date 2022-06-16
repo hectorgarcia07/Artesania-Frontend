@@ -1,44 +1,23 @@
 /* eslint-disable no-extra-boolean-cast */
-import { Formik, Field, Form, ErrorMessage,FieldArray, FormikErrors, FormikTouched } from 'formik';
-import { ShoeData, Gender, OnlySizesData, FormError,Age, Size } from '../../types'
-import * as Yup from 'yup';
+import { Formik, Field, Form, ErrorMessage, FieldArray, FormikErrors, FormikTouched } from 'formik';
+import { ShoeData, Gender, OnlySizesData, FormError, Age, Size } from '../../types'
 import { SetStateAction } from 'react';
-import { TextField, InputLabel, FormControl, Select, MenuItem } from '@mui/material';
+import { TextField, InputLabel, FormControl, Select, MenuItem, Button, Box, Typography } from '@mui/material';
 
-interface SheFormProp{
-  submitState: FormError, 
+import { validationSchema } from '../../utils/ShoeFormSchema'
+
+interface SheFormProp {
+  submitState: FormError,
   onSubmit: (fields: ShoeData) => Promise<void>,
   data: ShoeData | null
 }
 
-const ShoeForm = ({submitState, onSubmit, data}:SheFormProp) => {
-  console.log("Shoe form", onSubmit)
-  const validationSchema = Yup.object().shape({
-    name: Yup.string()
-      .required('Name is required'),
-    color: Yup.string()
-      .required('Color is required'),
-    price: Yup.number().moreThan(0)
-      .required('A price is required'),
-    gender: Yup.string()
-      .required('Select an gender'),
-    age: Yup.string()
-      .required('Select an age'),
-    sizes: Yup.array().of(
-      Yup.object().shape({
-        size: Yup.number().moreThan(0)
-          .required('A size is required'),
-        quantity: Yup.number()
-          .required('A quantity is required')
-          .moreThan(-1)
-    })).min(1)
+const ShoeForm = ({ submitState, onSubmit, data }: SheFormProp) => {
 
-  })
-
-  let initialValue:ShoeData;
+  let initialValue: ShoeData;
 
   //make a new initial value or make a copy of the passed data to edit.
-  if(data == null){
+  if (data == null) {
     initialValue = {
       name: "",
       color: "",
@@ -50,144 +29,194 @@ const ShoeForm = ({submitState, onSubmit, data}:SheFormProp) => {
         quantity: 0
       }]
     }
-  }else{
+  } else {
     initialValue = {
       ...data,
-      sizes: data.sizes.map(size => ({...size}))
+      sizes: data.sizes.map(size => ({ ...size }))
     }
   }
+  
   //creates a new obj to represent a size
-  const createNewSize = (values:ShoeData, setValues: { (values: SetStateAction<ShoeData>, shouldValidate?: boolean | undefined): void; (arg0: { sizes: OnlySizesData[]; name: string; color: string; price: number; gender: Gender | null; age: Age | null; }): void; }) => {
-    const newSizeArr:OnlySizesData[] = [...values.sizes]
-    newSizeArr.push({size: 0, quantity: 0})
-    setValues({...values, sizes: newSizeArr})
+  const createNewSize = (values: ShoeData, setValues: { (values: SetStateAction<ShoeData>, shouldValidate?: boolean | undefined): void; (arg0: { sizes: OnlySizesData[]; name: string; color: string; price: number; gender: Gender | null; age: Age | null; }): void; }) => {
+    const newSizeArr: OnlySizesData[] = [...values.sizes]
+    newSizeArr.push({ size: 0, quantity: 0 })
+    setValues({ ...values, sizes: newSizeArr })
   }
 
   //remvoes an size from the array
-  const removeSize = (index:number, values:ShoeData, setValues: { (values: SetStateAction<ShoeData>, shouldValidate?: boolean | undefined): void; (arg0: { sizes: OnlySizesData[]; name: string; color: string; price: number; gender: Gender | null; age: Age | null; }): void; }) => {
-    const newSizeArr:OnlySizesData[] = [...values.sizes]
+  const removeSize = (index: number, values: ShoeData, setValues: { (values: SetStateAction<ShoeData>, shouldValidate?: boolean | undefined): void; (arg0: { sizes: OnlySizesData[]; name: string; color: string; price: number; gender: Gender | null; age: Age | null; }): void; }) => {
+    const newSizeArr: OnlySizesData[] = [...values.sizes]
     newSizeArr.splice(index, 1)
-    setValues({...values, sizes: newSizeArr})
+    setValues({ ...values, sizes: newSizeArr })
   }
 
-  const stuff = (error: string | string[] | FormikErrors<Omit<Size, "id">>[] | undefined, touched: FormikTouched<Omit<Size, "id">>[] | undefined, i:number) =>{
-    console.log("Error", error)
-    if(error && error != undefined && touched && touched != undefined){
-      return Boolean(error[i]) && touched[i]
+  const checkErrorForSize = (touched: FormikTouched<Omit<Size, "id">>[] | { size: any; }[] | undefined, error:any, i: number) => {
+    if (error != undefined && error[i] != undefined && touched != undefined && touched[i] != undefined) {
+      return touched[i].size && Boolean(error[i].size)
     }
-    console.log("Touched", touched)
     return false
+  }
+
+  const checkHelperTextForSize = (touched: FormikTouched<Omit<Size, "id">>[] | undefined, error:any, i: number) => {
+    console.log("CHECK HELPER TEXT")
+    console.log("error: ", error)
+    console.log("touched", touched)
+    if (error != undefined && error[i] != undefined && touched != undefined && touched[i] != undefined) {
+      return touched[i].size && error[i].size
+    }
+    return false
+  }
+
+  const checkErrorForQuantity = (touched:any, error:any, i: number) => {
+    if (error != undefined && error[i] != undefined && touched != undefined && touched[i] != undefined) {
+      return touched[i].quantity && Boolean(error[i].quantity)
+    }
+    return false
+  }
+
+  const checkHelperTextForQuantity = (touched:any, error:any, i: number) => {
+    console.log("CHECK HELPER TEXT")
+    console.log("error: ", error)
+    console.log("touched", touched)
+    if (error != undefined && error[i] != undefined && touched != undefined && touched[i] != undefined) {
+      return touched[i].quantity && error[i].quantity
+    }
+    return false
+  }
+
+  const checkIfUniqueSizes = (error:any) => {
+    if (error != undefined ) {
+      return Boolean(error.unique) 
+    }
+    return false
+  }
+
+  const style = {
+    pb: '1rem'
   }
 
   return (
     <>
-    {Boolean(submitState.error) ? (<div>SERVER IS DOWN!</div>) : null}
-    <Formik initialValues={initialValue} validationSchema={validationSchema} onSubmit={onSubmit}>
-      {({ errors, values, touched, setValues, handleChange }) => (
-        <Form >
-          <TextField
-            fullWidth
-            id="email"
-            name="name"
-            label="Name"
-            value={values.name}
-            onChange={handleChange}
-            error={touched.name && Boolean(errors.name)}
-            helperText={touched.name && errors.name}
-          />
-
-          <TextField
-            fullWidth
-            id="color"
-            name="color"
-            label="Color"
-            value={values.color}
-            onChange={handleChange}
-            error={touched.color && Boolean(errors.color)}
-            helperText={touched.color && errors.color}
-          />
-
-          <TextField
-            fullWidth
-            type="number"
-            id="price"
-            name="price"
-            label="Price"
-            value={values.price}
-            onChange={handleChange}
-            error={touched.price && Boolean(errors.price)}
-            helperText={touched.price && errors.price}
-          />
-
-          <FormControl fullWidth>
-            <InputLabel id="gender_label">Gender</InputLabel>
-            <Select
-              labelId="gender_label"
-              name='gender'
-              value={values.gender}
-              label="Gender"
+      {Boolean(submitState.error) ? (<div>SERVER IS DOWN!</div>) : null}
+      <Formik initialValues={initialValue} validationSchema={validationSchema} onSubmit={onSubmit}>
+        {({ errors, values, touched, setValues, handleChange }) => (
+          <Form >
+            <TextField
+              sx={style}
+              fullWidth
+              id="email"
+              name="name"
+              label="Name"
+              value={values.name}
               onChange={handleChange}
-            >
-              <MenuItem value={Gender.MALE}>Male</MenuItem>
-              <MenuItem value={Gender.FEMALE}>Female</MenuItem>
-              <MenuItem value={Gender.UNISEX}>Unisex</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl fullWidth>
-            <InputLabel id="age_label">Age</InputLabel>
-            <Select
-              labelId="age_label"
-              name='age'
-              value={values.age}
-              label="Age"
+              error={touched.name && Boolean(errors.name)}
+              helperText={touched.name && errors.name}
+            />
+            <TextField
+              sx={style}
+              fullWidth
+              id="color"
+              name="color"
+              label="Color"
+              value={values.color}
               onChange={handleChange}
-            >
-              <MenuItem value={Age.ADULT}>Adult</MenuItem>
-              <MenuItem value={Age.KID}>Kid</MenuItem>
-            </Select>
-          </FormControl>
-          
-          
+              error={touched.color && Boolean(errors.color)}
+              helperText={touched.color && errors.color}
+            />
+            <TextField
+              sx={style}
+              fullWidth
+              type="number"
+              id="price"
+              name="price"
+              label="Price"
+              value={values.price}
+              onChange={handleChange}
+              error={touched.price && Boolean(errors.price)}
+              helperText={touched.price && errors.price}
+            />
+            <FormControl fullWidth sx={style}>
+              <InputLabel id="gender_label">Gender</InputLabel>
+              <Select
+                labelId="gender_label"
+                name='gender'
+                value={values.gender}
+                label="Gender"
+                onChange={handleChange}
+              >
+                <MenuItem value={Gender.MALE}>Male</MenuItem>
+                <MenuItem value={Gender.FEMALE}>Female</MenuItem>
+                <MenuItem value={Gender.UNISEX}>Unisex</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl fullWidth sx={style}>
+              <InputLabel id="age_label">Age</InputLabel>
+              <Select
+                labelId="age_label"
+                name='age'
+                value={values.age}
+                label="Age"
+                onChange={handleChange}
+              >
+                <MenuItem value={Age.ADULT}>Adult</MenuItem>
+                <MenuItem value={Age.KID}>Kid</MenuItem>
+              </Select>
+            </FormControl>
 
-          {errors.sizes && touched.sizes ? (<div>Sizes must be unique</div>) : null}
-          
-          <FieldArray name="sizes">
-            
-            {() => (values.sizes.map((size, i) => {
-              return(
-                <div key={i}>
-                  
-                  <TextField
-                    fullWidth
-                    type="number"
-                    name={`sizes.${i}.size`}
-                    label="Size"
-                    value={values.sizes[i].size}
-                    onChange={handleChange}
-                    error={touched?.sizes?[i] && Boolean(errors?.sizes?[i]) }
-                    helperText={touched.price && errors.price}
-                  />
+            <Typography gutterBottom variant="h5" component="div">
+              Sizes:
+            </Typography>
 
+            {checkIfUniqueSizes(errors.sizes) ? <Box sx={style}>Sizes must be unique</Box> : null}
 
+            <FieldArray name="sizes">
+              {() => (values.sizes.map((_size, i) => {
+                return (
+                  <Box key={i} sx={style}>
+                    <TextField
+                      sx={style}
+                      fullWidth
+                      type="number"
+                      name={`sizes.${i}.size`}
+                      label="Size"
+                      value={values.sizes[i].size}
+                      onChange={handleChange}
+                      error={checkErrorForSize(touched.sizes, errors.sizes, i)}
+                      helperText={checkHelperTextForSize(touched.sizes, errors.sizes, i)}
+                      />
 
+                    <TextField
+                      fullWidth
+                      sx={style}
+                      type="number"
+                      name={`sizes.${i}.quantity`}
+                      label="Quantity"
+                      value={values.sizes[i].quantity}
+                      onChange={handleChange}
+                      error={checkErrorForQuantity(touched.sizes, errors.sizes, i)}
+                      helperText={checkHelperTextForQuantity(touched.sizes, errors.sizes, i)}
+                      />
 
-                  <div className="form-group col-6">
-                    <label>Quantity</label>
-                    <Field name={`sizes.${i}.quantity`} type="number" />
-                    <ErrorMessage name={`sizes.${i}.quantity`} component="div" className="invalid-feedback">
-                      {() => <div>Quantity must be greater than 0</div>}
-                    </ErrorMessage>
-                  </div>
-                  <button onClick={() => removeSize(i, values, setValues)}>Remove</button>
-                </div>
-              )
+                    <Button 
+                      onClick={() => removeSize(i, values, setValues)} 
+                      type="button"
+                      variant="contained"
+                    >
+                      Remove Size
+                    </Button>
+                  </Box>
+                )
               }))}
-          </FieldArray>
-          <button onClick={() => createNewSize(values, setValues)}>Add new size</button>
-          <button type="submit">Submit</button>
-        </Form>
-      )}
-    </Formik>
+            </FieldArray>
+            <Box sx={style}>
+              <Button onClick={() => createNewSize(values, setValues)} variant="contained">Add new size</Button>
+            </Box>
+            <Box sx={style}> 
+              <Button type="submit" variant="contained">Submit</Button>
+            </Box>
+          </Form>
+        )}
+      </Formik>
     </>
   )
 }

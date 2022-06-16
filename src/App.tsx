@@ -6,6 +6,7 @@ import { useMatch, Route, Link, Routes } from "react-router-dom";
 import CreateShoeForm from './components/forms/CreateShoeForm';
 import EditShoeForm from './components/forms/EditShoeForm';
 import SingleShoeCard from './components/SingleShoeCard'
+import { Box } from '@mui/material';
 
 //import Shoes from './components/Shoes'
 function App() {
@@ -31,8 +32,10 @@ function App() {
 
   return (
     <main>
-      <Link to="/"><button>Home</button></Link>
-      <Link to="/createShoe"><button>Form</button></Link>
+      <Box sx={{mb: '1rem'}}>
+        <Link to="/"><button>Home</button></Link>
+        <Link to="/createShoe"><button>Form</button></Link>
+      </Box>
 
       <Routes>
         <Route path="/*" element={<Shoes />} />

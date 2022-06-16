@@ -6,7 +6,7 @@
       "dom.iterable",
       "esnext"
     ],
-    "allowJs": true,
+    "allowJs": false,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -19,10 +19,5 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-  },
-  "include": [
-    "src", 
-    "types/yup"
-, "types/index.d.ts"  ],
-
+  }
 }
