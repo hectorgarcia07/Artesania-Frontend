@@ -1,12 +1,14 @@
 import axios from 'axios'
 import { Shoe, ShoeData } from '../types'
 const baseUrl = 'http://localhost:3003/api/shoes'
+import { Shoes } from '../db'
 
 //get all shoes and return it or the error message
 const getAll = async () => {
   try{
-    const { data } = await axios.get<Shoe[]>(`${baseUrl}`);
-    return data
+    /* const { data } = await axios.get<Shoe[]>(`${baseUrl}`);
+    console.log("DATA", data) */
+    return Shoes
   }catch(e: unknown){
     let err = 'Error getting all shoes ';
     if(e instanceof Error){
@@ -31,8 +33,14 @@ const updateShoeEntry = async (id:string, newObject:ShoeData) => {
   return response
 }
 
+const deleteShoeEntry = async (id:string) => {
+  const response = await axios.delete(`${baseUrl}/${id}`)
+  return response
+}
+
 export default { 
   getAll,
   createShoeEntry,
-  updateShoeEntry
+  updateShoeEntry,
+  deleteShoeEntry
 }

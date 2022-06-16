@@ -5,14 +5,16 @@ import ShoeServices from './services/shoes'
 import { useMatch, Route, Link, Routes } from "react-router-dom";
 import CreateShoeForm from './components/forms/CreateShoeForm';
 import EditShoeForm from './components/forms/EditShoeForm';
+import SingleShoeCard from './components/SingleShoeCard'
 
 //import Shoes from './components/Shoes'
 function App() {
   const [state, dispatch] = useStateValue();
-  const match = useMatch('/updateShoe/:id')
-  const shoeData = match?.params.id ? state.shoes[match?.params.id] : null
+  const updateMatch = useMatch('/updateShoe/:id')
+  const shoeData = updateMatch?.params.id ? state.shoes[updateMatch?.params.id] : null
 
-  console.log("State", state)
+  const viewShoe = useMatch('/shoe/:id')
+  const singleShoeData = viewShoe?.params.id ? state.shoes[viewShoe?.params.id] : null
   
   useEffect(() => {
     const fetchPatientList = async () => {
@@ -34,6 +36,7 @@ function App() {
 
       <Routes>
         <Route path="/*" element={<Shoes />} />
+        <Route path="/shoe/:id" element={singleShoeData === null ? <Shoes /> : <SingleShoeCard singleShoeData={singleShoeData} />} />
         <Route path="/createShoe" element={<CreateShoeForm />} />
         <Route path="/updateShoe/:id" element={shoeData === null ? <CreateShoeForm /> : <EditShoeForm shoeData={shoeData} /> } />
       </Routes>

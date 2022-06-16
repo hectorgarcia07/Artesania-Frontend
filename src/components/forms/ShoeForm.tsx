@@ -1,8 +1,9 @@
 /* eslint-disable no-extra-boolean-cast */
-import { Formik, Field, Form, ErrorMessage,FieldArray } from 'formik';
-import { ShoeData, Gender, OnlySizesData, FormError,Age } from '../../types'
+import { Formik, Field, Form, ErrorMessage,FieldArray, FormikErrors, FormikTouched } from 'formik';
+import { ShoeData, Gender, OnlySizesData, FormError,Age, Size } from '../../types'
 import * as Yup from 'yup';
 import { SetStateAction } from 'react';
+import { TextField, InputLabel, FormControl, Select, MenuItem } from '@mui/material';
 
 interface SheFormProp{
   submitState: FormError, 
@@ -30,9 +31,7 @@ const ShoeForm = ({submitState, onSubmit, data}:SheFormProp) => {
         quantity: Yup.number()
           .required('A quantity is required')
           .moreThan(-1)
-    })).min(1).test("Unique", "Sizes must be unique", values => {
-      const sizesSet = new Set(values?.map(value => value.size))
-      return values!.length  === sizesSet.size  })
+    })).min(1)
 
   })
 
@@ -71,50 +70,107 @@ const ShoeForm = ({submitState, onSubmit, data}:SheFormProp) => {
     setValues({...values, sizes: newSizeArr})
   }
 
+  const stuff = (error: string | string[] | FormikErrors<Omit<Size, "id">>[] | undefined, touched: FormikTouched<Omit<Size, "id">>[] | undefined, i:number) =>{
+    console.log("Error", error)
+    if(error && error != undefined && touched && touched != undefined){
+      return Boolean(error[i]) && touched[i]
+    }
+    console.log("Touched", touched)
+    return false
+  }
+
   return (
     <>
     {Boolean(submitState.error) ? (<div>SERVER IS DOWN!</div>) : null}
     <Formik initialValues={initialValue} validationSchema={validationSchema} onSubmit={onSubmit}>
-      {({ errors, values, touched, setValues }) => (
+      {({ errors, values, touched, setValues, handleChange }) => (
         <Form >
-          <label htmlFor="name">Name</label>
-          <Field name="name" type="text" />
-          <ErrorMessage name="name" />
+          <TextField
+            fullWidth
+            id="email"
+            name="name"
+            label="Name"
+            value={values.name}
+            onChange={handleChange}
+            error={touched.name && Boolean(errors.name)}
+            helperText={touched.name && errors.name}
+          />
 
-          <label htmlFor="color">Color</label>
-          <Field name="color" type="text" />
-          <ErrorMessage name="color" />
+          <TextField
+            fullWidth
+            id="color"
+            name="color"
+            label="Color"
+            value={values.color}
+            onChange={handleChange}
+            error={touched.color && Boolean(errors.color)}
+            helperText={touched.color && errors.color}
+          />
 
-          <label htmlFor="price">Price</label>
-          <Field name="price" type="number" />
-          <ErrorMessage name="price" />
+          <TextField
+            fullWidth
+            type="number"
+            id="price"
+            name="price"
+            label="Price"
+            value={values.price}
+            onChange={handleChange}
+            error={touched.price && Boolean(errors.price)}
+            helperText={touched.price && errors.price}
+          />
 
-          <Field name="gender" as="select" className="">
-            <option value={Gender.MALE}>Male</option>
-            <option value={Gender.FEMALE}>Female</option>
-            <option value={Gender.UNISEX}>Unisex</option>
-          </Field>
-          <ErrorMessage name="gender" />
-
-          <Field name="age" as="select" className="">
-            <option value={Age.ADULT}>Adult</option>
-            <option value={Age.KID}>Kid</option>
-          </Field>
-          <ErrorMessage name="age" />
+          <FormControl fullWidth>
+            <InputLabel id="gender_label">Gender</InputLabel>
+            <Select
+              labelId="gender_label"
+              name='gender'
+              value={values.gender}
+              label="Gender"
+              onChange={handleChange}
+            >
+              <MenuItem value={Gender.MALE}>Male</MenuItem>
+              <MenuItem value={Gender.FEMALE}>Female</MenuItem>
+              <MenuItem value={Gender.UNISEX}>Unisex</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl fullWidth>
+            <InputLabel id="age_label">Age</InputLabel>
+            <Select
+              labelId="age_label"
+              name='age'
+              value={values.age}
+              label="Age"
+              onChange={handleChange}
+            >
+              <MenuItem value={Age.ADULT}>Adult</MenuItem>
+              <MenuItem value={Age.KID}>Kid</MenuItem>
+            </Select>
+          </FormControl>
           
+          
+
           {errors.sizes && touched.sizes ? (<div>Sizes must be unique</div>) : null}
+          
           <FieldArray name="sizes">
             
             {() => (values.sizes.map((size, i) => {
               return(
                 <div key={i}>
-                  <div className="form-group col-6">
-                    <label>Size</label>
-                    <Field name={`sizes.${i}.size`} type="number" />
-                    <ErrorMessage name={`sizes.${i}.size`} component="div" className="invalid-feedback">
-                      {() => <div>Size must be greater than 0</div>}
-                    </ErrorMessage>
-                  </div>
+                  
+                  <TextField
+                    fullWidth
+                    type="number"
+                    name={`sizes.${i}.size`}
+                    label="Size"
+                    value={values.sizes[i].size}
+                    onChange={handleChange}
+                    error={touched?.sizes?[i] && Boolean(errors?.sizes?[i]) }
+                    helperText={touched.price && errors.price}
+                  />
+
+
+
+
                   <div className="form-group col-6">
                     <label>Quantity</label>
                     <Field name={`sizes.${i}.quantity`} type="number" />
