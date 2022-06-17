@@ -13,6 +13,7 @@ const CreateShoeForm = () => {
   const navigate = useNavigate()
 
   const onSubmit = async(fields:ShoeData) => {
+    console.log("FIELDS", fields)
     const response = await ShoeServices.createShoeEntry(fields)
     console.log("RESPONSE", response)
 

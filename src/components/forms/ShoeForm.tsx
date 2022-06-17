@@ -2,7 +2,7 @@
 import { Formik, Field, Form, ErrorMessage, FieldArray, FormikErrors, FormikTouched } from 'formik';
 import { ShoeData, Gender, OnlySizesData, FormError, Age, Size } from '../../types'
 import { SetStateAction } from 'react';
-import { TextField, InputLabel, FormControl, Select, MenuItem, Button, Box, Typography } from '@mui/material';
+import { TextField, InputLabel, FormControl, Select, MenuItem, Button, Box, Typography, Input } from '@mui/material';
 
 import { validationSchema } from '../../utils/ShoeFormSchema'
 
@@ -101,6 +101,13 @@ const ShoeForm = ({ submitState, onSubmit, data }: SheFormProp) => {
       <Formik initialValues={initialValue} validationSchema={validationSchema} onSubmit={onSubmit}>
         {({ errors, values, touched, setValues, handleChange }) => (
           <Form >
+            <InputLabel htmlFor="contained-button-file" sx={style}>
+              <Input name="shoe_image"
+                type="file" 
+                inputProps={{accept: "image/png, image/jpg, image/jpeg"}} 
+                id="contained-button-file" 
+              />
+            </InputLabel>
             <TextField
               sx={style}
               fullWidth
