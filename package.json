@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@auth0/auth0-react": "^1.10.1",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
     "@mui/material": "^5.8.4",
@@ -59,5 +60,6 @@
     "eslint": "^7.32.0",
     "eslint-plugin-react": "^7.30.0",
     "typescript": "^4.7.3"
-  }
+  },
+  "proxy": "http://localhost:3003"
 }

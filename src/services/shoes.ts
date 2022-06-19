@@ -1,14 +1,14 @@
 import axios from 'axios'
 import { Shoe, ShoeData } from '../types'
-const baseUrl = 'http://localhost:3003/api/shoes'
+const baseUrl = '/api/shoes'
 import { Shoes } from '../db'
 
 //get all shoes and return it or the error message
 const getAll = async () => {
   try{
-    /* const { data } = await axios.get<Shoe[]>(`${baseUrl}`);
-    console.log("DATA", data) */
-    return Shoes
+    const { data } = await axios.get<Shoe[]>(`${baseUrl}`);
+    console.log("DATA", data)
+    return data
   }catch(e: unknown){
     let err = 'Error getting all shoes ';
     if(e instanceof Error){
