@@ -27,7 +27,7 @@ function App() {
         console.error(e);
       }
     };
-    void fetchPatientList();
+    void fetchPatientList(); 
   }, [dispatch]);
 
   return (
