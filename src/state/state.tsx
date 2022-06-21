@@ -1,14 +1,15 @@
 import React, { createContext, useContext, useReducer } from "react";
 import { Shoe } from "../types";
-
 import { Action } from "./reducer";
 
 export type State = {
   shoes: { [id: string]: Shoe };
+  token: string;
 };
 
 const initialState: State = {
-  shoes: {}
+  shoes: {},
+  token: ''
 };
 
 //The context of that will be used

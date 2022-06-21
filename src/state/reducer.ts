@@ -1,6 +1,5 @@
 import { State } from "./state";
 import { Shoe } from "../types";
-import { ObjectSchema } from "yup";
 
 export type Action =
   | {
@@ -19,12 +18,22 @@ export type Action =
     type: 'DELTE_SHOE',
     payload: string;
    }
+  | {
+    type: 'ADD_TOKEN',
+    payload: string;
+  }
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
+    case 'ADD_TOKEN':
+      return {
+        ...state,
+        token: action.payload
+      };
     case "SET_SHOE_LIST":
       console.log('state', state);
       return {
+        ...state,
         shoes: {
           ...action.payload.reduce(
             (memo, shoe) => ({ ...memo, [shoe.id]: shoe }),
@@ -34,6 +43,7 @@ export const reducer = (state: State, action: Action): State => {
       };
     case "ADD_SHOE":
       return {
+        ...state,
         shoes: {
           ...state.shoes,
           [action.payload.id]: action.payload
@@ -41,14 +51,15 @@ export const reducer = (state: State, action: Action): State => {
       };
     case "UPDATE_SHOE":
       return {
+        ...state,
         shoes:{
           ...state.shoes,
           [action.payload.id]: action.payload
         }
       }
     case "DELTE_SHOE":
-      console.log("DEL SHOE")
       return {
+        ...state,
         shoes: deleteFromState(action.payload, state.shoes)
       }
     default:

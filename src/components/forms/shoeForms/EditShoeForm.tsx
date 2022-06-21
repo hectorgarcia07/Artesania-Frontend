@@ -1,6 +1,6 @@
-import { ShoeData, FormError, Shoe } from "../../types"
-import ShoeServices from '../../services/shoes'
-import { useStateValue } from "../../state";
+import { ShoeData, FormError, Shoe } from "../../../types"
+import ShoeServices from '../../../services/shoes'
+import { useStateValue } from "../../../state";
 import { useNavigate } from "react-router-dom";
 import ShoeForm from "./ShoeForm";
 import { useState } from "react";

@@ -3,19 +3,15 @@ import { useEffect } from 'react';
 import { useStateValue } from "./state";
 import ShoeServices from './services/shoes'
 import { useMatch, Route, Link, Routes } from "react-router-dom";
-import CreateShoeForm from './components/forms/CreateShoeForm';
-import EditShoeForm from './components/forms/EditShoeForm';
+import CreateShoeForm from './components/forms/shoeForms/CreateShoeForm';
+import EditShoeForm from './components/forms/shoeForms/EditShoeForm';
 import SingleShoeCard from './components/SingleShoeCard'
+import SignIn from './components/forms/signin/SignIn'
 import { Box } from '@mui/material';
-import LoginButton from './components/Buttons/LoginButton';
-import LogoutButton from './components/Buttons/LogoutButton';
-import { useAuth0 } from "@auth0/auth0-react";
 
-//import Shoes from './components/Shoes'
 function App() {
   const [state, dispatch] = useStateValue();
   const updateMatch = useMatch('/updateShoe/:id')
-  const { user, isAuthenticated, isLoading } = useAuth0();
   const shoeData = updateMatch?.params.id ? state.shoes[updateMatch?.params.id] : null
 
   const viewShoe = useMatch('/shoe/:id')
@@ -34,16 +30,12 @@ function App() {
     void fetchPatientList();
   }, [dispatch]);
 
-  if (isLoading) {
-    return <div>Loading ...</div>;
-  }
-
   return (
     <main>
       <Box sx={{mb: '1rem'}}>
         <Link to="/"><button>Home</button></Link>
         <Link to="/createShoe"><button>Form</button></Link>
-        {isAuthenticated ? <LogoutButton /> : <LoginButton />}
+        <Link to="/signin"><button>Sign in</button></Link>
       </Box>
 
       <Routes>
@@ -51,6 +43,7 @@ function App() {
         <Route path="/shoe/:id" element={singleShoeData === null ? <Shoes /> : <SingleShoeCard singleShoeData={singleShoeData} />} />
         <Route path="/createShoe" element={<CreateShoeForm />} />
         <Route path="/updateShoe/:id" element={shoeData === null ? <CreateShoeForm /> : <EditShoeForm shoeData={shoeData} /> } />
+        <Route path="/signin"  element={<SignIn />} />
       </Routes>
     </main>
   );

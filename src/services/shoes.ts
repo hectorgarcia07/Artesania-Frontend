@@ -1,7 +1,11 @@
 import axios from 'axios'
 import { Shoe, ShoeData } from '../types'
+
 const baseUrl = '/api/shoes'
-import { Shoes } from '../db'
+
+const setToken = (token:string):string => {  
+  return `bearer ${token}`
+}
 
 //get all shoes and return it or the error message
 const getAll = async () => {
@@ -18,9 +22,12 @@ const getAll = async () => {
   }
 }
 
-const createShoeEntry = async (shoeObj:ShoeData) => {
+const createShoeEntry = async (shoeObj:ShoeData, token:string) => {
   try{
-    const response = await axios.post(baseUrl, shoeObj)
+    const config = {
+      headers: { Authorization: setToken(token) },  
+    }
+    const response = await axios.post(baseUrl, shoeObj, config)
     console.log("RESPONSE", response)
     return response
   }catch(e: any){

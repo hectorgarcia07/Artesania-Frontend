@@ -1,10 +1,10 @@
 /* eslint-disable no-extra-boolean-cast */
-import { Formik, Field, Form, ErrorMessage, FieldArray, FormikErrors, FormikTouched } from 'formik';
-import { ShoeData, Gender, OnlySizesData, FormError, Age, Size } from '../../types'
+import { Formik, Form, FieldArray, FormikTouched } from 'formik';
+import { ShoeData, Gender, OnlySizesData, FormError, Age, Size } from '../../../types'
 import { SetStateAction } from 'react';
 import { TextField, InputLabel, FormControl, Select, MenuItem, Button, Box, Typography } from '@mui/material';
 
-import { validationSchema } from '../../utils/ShoeFormSchema'
+import { validationSchema } from '../../../utils/ShoeFormSchema'
 
 interface SheFormProp {
   submitState: FormError,
