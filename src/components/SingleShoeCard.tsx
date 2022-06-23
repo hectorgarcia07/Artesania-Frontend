@@ -43,8 +43,8 @@ const SingleShoeCard = ({singleShoeData}:{singleShoeData: Shoe}) => {
   }
   const propertyNameSize = { fontSize: '1.3rem'}
   return(
-    <Container>
-      <Card sx={{ maxWidth: 345 }}>
+    <Container maxWidth="sm" sx={{pt: "1.5rem"}}>
+      <Card>
         <CardContent>
           <Box>
             <Typography gutterBottom variant="h5" component="div">
@@ -83,9 +83,12 @@ const SingleShoeCard = ({singleShoeData}:{singleShoeData: Shoe}) => {
               ${singleShoeData.price}
             </Typography>
           </Box>
-          <Box sx={shoeCardContentStyle}>
+          <Box sx={{...shoeCardContentStyle, pt: "1.5rem"}} >
             <Typography gutterBottom sx={propertyNameSize} component="p">
               Size
+            </Typography>
+            <Typography gutterBottom sx={propertyNameSize} component="p">
+              Quantity
             </Typography>
           </Box>
           {
@@ -110,15 +113,15 @@ const SingleShoeCard = ({singleShoeData}:{singleShoeData: Shoe}) => {
             Delete
           </Button>
           { !toggleDeleteBtn ? 
-              null : 
-              <>
+              null :
+              <Box sx={{pt: "1.5rem"}}>
                 <Button onClick={deleteShoe} sx={{color: "red"}} >
                   Delete permenetly!
                 </Button>
                 <Button onClick={() => setToggleDeleteBtn(false)}>
                   Dont delete
                 </Button>
-              </>
+              </Box>
           }
         </CardContent>
       </Card>

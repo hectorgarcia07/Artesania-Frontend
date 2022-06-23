@@ -11,6 +11,7 @@ import CreateShoeForm from './components/forms/shoeForms/CreateShoeForm'
 import SingleShoeCard from './components/SingleShoeCard'
 import EditShoeForm from './components/forms/shoeForms/EditShoeForm'
 import { isTokenValid } from './utils/isTokenValid'
+import NavBar from './components/Navbar'
 
 function App() {
   const getShoeFromID = (id:PathMatch<"id"> | null) => {
@@ -40,22 +41,9 @@ function App() {
     void fetchPatientList(); 
   }, [dispatch]);
 
-  const signOut = () => {
-    localStorage.removeItem('token')
-    navigate('/')
-  }
-
   return (
     <>
-      <Box sx={{mb: '1rem'}}>
-        <Link to="/"><button>Home</button></Link>
-        <Link to="/createShoe"><button>Form</button></Link>
-        { isTokenValid() ? 
-            <button onClick={signOut}>Sign Out</button> : 
-            <Link to="/signin"><button>Sign in</button></Link>
-        }
-      </Box>
-
+      <NavBar />
       <Routes>
         <Route path="/" element={<Shoes />} />
         <Route path="/signin"  element={ localStorage.getItem('token') ? <Navigate replace to="/" /> : <SignIn /> } />
