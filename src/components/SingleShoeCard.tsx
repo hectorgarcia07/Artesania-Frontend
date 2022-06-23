@@ -1,12 +1,14 @@
 import {
-  Card, CardActions, Box, Button, CardContent,
-  Typography, Container, Divider
+  Card, Box, Button, CardContent,
+  Typography, Container, 
 } from '@mui/material/';
-import { Link } from 'react-router-dom';
+import { Link, PathMatch } from 'react-router-dom';
 import { Shoe } from '../types'
 import { useStateValue } from '../state';
-import { useState } from 'react';
+import { JSXElementConstructor, Key, ReactElement, ReactFragment, ReactPortal, useState } from 'react';
 import ShoeService from '../services/shoes' 
+import { useNavigate } from 'react-router-dom';
+
 /*
 <CardMedia
         component="img"
@@ -15,17 +17,23 @@ import ShoeService from '../services/shoes'
         image="/static/images/cards/contemplative-reptile.jpg"
       />*/
 
-const SingleShoeCard = ({singleShoeData}:{singleShoeData:Shoe }) => {
+const SingleShoeCard = ({singleShoeData}:{singleShoeData: Shoe}) => {
+  console.log("SNGEL SHOE CARD")
   const [state, dispatch] = useStateValue();
-
+  const navigate = useNavigate()
   const [ toggleDeleteBtn, setToggleDeleteBtn ] = useState(false);
-
+  /* if(singleShoeData == null){
+    return <></>
+  }
+ */
   const deleteShoe = async() => {
-    const response = await ShoeService.deleteShoeEntry(singleShoeData.id)
+    const token = JSON.parse(localStorage.getItem("token")!)
+    const response = await ShoeService.deleteShoeEntry(singleShoeData.id, token)
     console.log("DELETE ", response)
 
     if(response.status === 204){
       dispatch({ type: "DELTE_SHOE", payload: singleShoeData.id })
+      navigate("/")
     }
   }
   const shoeCardContentStyle = { 
@@ -81,7 +89,7 @@ const SingleShoeCard = ({singleShoeData}:{singleShoeData:Shoe }) => {
             </Typography>
           </Box>
           {
-            singleShoeData.sizes.map(size => (
+            singleShoeData.sizes.map((size: { id: Key | null | undefined; size: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | null | undefined; quantity: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | null | undefined; }) => (
               <Box key={size.id} sx={shoeCardContentStyle}>
                 <Typography gutterBottom sx={{...propertyNameSize, paddingLeft: '0.5rem'}} component="p">
                   {size.size}
@@ -93,7 +101,7 @@ const SingleShoeCard = ({singleShoeData}:{singleShoeData:Shoe }) => {
             ))
           }
           <Link to={`/updateShoe/${singleShoeData.id}`}>
-            <Button variant="contained" href="#contained-buttons">
+            <Button variant="contained">
               Update Shoe Data
             </Button>
           </Link>

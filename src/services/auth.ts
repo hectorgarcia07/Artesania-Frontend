@@ -3,8 +3,21 @@ import { Shoe, ShoeData } from '../types'
 
 const baseUrl = '/api/users'
 
-export const signin = async (credentials:{username: string, password:string}) => {
-  const response = await axios.post(`${baseUrl}/login`, credentials)
-  console.log(response)
-  return response;
+const signin = async (credentials:{username: string, password:string}) => {
+  try{
+    const response = await axios.post(`${baseUrl}/signin`, credentials)
+    return response;
+  }catch(error ){
+     // check if the error was thrown from axios
+    if (axios.isAxiosError(error)) {
+      console.log('error ', error.response)
+      return error.response
+    } else {
+      throw new Error('different error than axios');
+    }
+  }
+}
+
+export default {
+  signin
 }

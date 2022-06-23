@@ -18,18 +18,9 @@ export type Action =
     type: 'DELTE_SHOE',
     payload: string;
    }
-  | {
-    type: 'ADD_TOKEN',
-    payload: string;
-  }
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
-    case 'ADD_TOKEN':
-      return {
-        ...state,
-        token: action.payload
-      };
     case "SET_SHOE_LIST":
       console.log('state', state);
       return {

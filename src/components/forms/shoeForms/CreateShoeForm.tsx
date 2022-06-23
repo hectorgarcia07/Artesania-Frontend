@@ -13,7 +13,8 @@ const CreateShoeForm = () => {
   const navigate = useNavigate()
 
   const onSubmit = async(fields:ShoeData) => {
-    const response = await ShoeServices.createShoeEntry(fields, state.token)
+    const token = JSON.parse(localStorage.getItem("token")!)
+    const response = await ShoeServices.createShoeEntry(fields, token)
     console.log("RESPONSE", response)
 
     if(response.status === 201){

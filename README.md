@@ -51,3 +51,5 @@ https://www.freecodecamp.org/news/build-dynamic-forms-in-react/
 https://jasonwatmore.com/post/2020/09/28/react-formik-dynamic-form-example
 https://medium.com/developer-rants/deploying-typescript-node-js-applications-to-heroku-81dd75424ce0
 https://www.topcoder.com/thrive/articles/authentication-and-authorization-in-express-js-api-using-jwt
+https://stackoverflow.com/questions/69911904/react-router-6-and-typescript-why-doesnt-it-pass-components-through-props
+https://stackoverflow.com/questions/69864165/error-privateroute-is-not-a-route-component-all-component-children-of-rou

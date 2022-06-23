@@ -4,12 +4,10 @@ import { Action } from "./reducer";
 
 export type State = {
   shoes: { [id: string]: Shoe };
-  token: string;
 };
 
 const initialState: State = {
   shoes: {},
-  token: ''
 };
 
 //The context of that will be used
