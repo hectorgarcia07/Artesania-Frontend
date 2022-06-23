@@ -2,7 +2,6 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { reducer, StateProvider } from "./state";
-
 import Container from '@mui/material/Container';
 
 const root = ReactDOM.createRoot(
@@ -10,10 +9,10 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <StateProvider reducer={reducer}>
-     <Router>
-      <Container>
-        <App />
-      </Container>
-    </Router>
+      <Router>
+        <Container component="main">
+          <App />
+        </Container>
+      </Router>
   </StateProvider>
 );

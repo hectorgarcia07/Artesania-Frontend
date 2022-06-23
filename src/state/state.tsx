@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useReducer } from "react";
 import { Shoe } from "../types";
-
 import { Action } from "./reducer";
 
 export type State = {
@@ -8,7 +7,7 @@ export type State = {
 };
 
 const initialState: State = {
-  shoes: {}
+  shoes: {},
 };
 
 //The context of that will be used

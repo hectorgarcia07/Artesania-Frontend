@@ -28,13 +28,11 @@ const ShoeList = ({shoe}:{shoe: Shoe} ) => {
           <Typography variant="subtitle1">
             
           </Typography>
-          <Link to={`/updateShoe/${shoe.id}`}>
-            <DOMLink to={`shoe/${shoe.id}`} color="inherit" underline="hover" component={Link}>
-              <Button variant="contained" href="#contained-buttons">
+          <DOMLink to={`shoe/${shoe.id}`} color="inherit" underline="hover" component={Link}>
+              <Button variant="contained">
                 View Details
               </Button>
             </DOMLink>
-          </Link>
         </Box>
       </CardContent>
     </Card>
