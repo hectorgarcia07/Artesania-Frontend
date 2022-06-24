@@ -1,0 +1,1 @@
+export const pathToDefault = 'https://shoe-images-app.s3.amazonaws.com/1656037038552.png'

@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { Shoe, ShoeData } from '../types'
 
 const baseUrl = '/api/users'
 

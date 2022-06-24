@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Shoe, ShoeData } from '../types'
+import { Shoe, ShoePostData } from '../types'
 
 const baseUrl = '/api/shoes'
 
@@ -14,11 +14,7 @@ const getConfig = (token:string) => {
 const getAll = async () => {
   try{
     const { data } = await axios.get<Shoe[]>(`${baseUrl}`);
-<<<<<<< HEAD
-    console.log("DATA", data)
-=======
     console.log("GETALL ", data)
->>>>>>> main
     return data
   }catch(e: unknown){
     let err = 'Error getting all shoes ';
@@ -46,18 +42,40 @@ const getSingleShoe = async (id:string, token:string) => {
   }
 }
 
-const createShoeEntry = async (shoeObj:ShoeData, token:string) => {
+const createShoeEntry = async (shoeObj:ShoePostData, token:string) => {
   try{
     const config = getConfig(token)
     const response = await axios.post(baseUrl, shoeObj, config)
     console.log("RESPONSE", response)
     return response
-  }catch(e: any){
-    return e
+  }catch(e: unknown){
+    if(e instanceof Error){
+      console.log('ERROR POSTING', e.message)
+      throw e
+    }
   }
 }
 
-const updateShoeEntry = async (id:string, newObject:ShoeData, token:string) => {
+const uploadImage = async (img:File, token:string) => {
+  try{
+    const config = getConfig(token)
+    const formData = new FormData()
+    formData.append("shoe_image", img)
+    console.log("FILE TO SEND: ", img, "CONFIG ", config)
+    const response = await axios.post(`${baseUrl}/img`, formData, config)
+    console.log("SUCCESS ", response.data)
+    return response.data.link
+  }catch(e: unknown){
+    console.log("failed to upload")
+    if(e instanceof Error){
+      console.log("ERROR FAILED UPLOAD ", e.message)
+    }
+    return null
+  }
+
+}
+
+const updateShoeEntry = async (id:string, newObject:ShoePostData, token:string) => {
   const config = getConfig(token)
   const response = await axios.put(`${baseUrl}/${id}`, newObject, config)
   return response
@@ -74,5 +92,6 @@ export default {
   getSingleShoe,
   createShoeEntry,
   updateShoeEntry,
-  deleteShoeEntry
+  deleteShoeEntry,
+  uploadImage
 }

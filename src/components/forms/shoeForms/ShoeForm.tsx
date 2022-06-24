@@ -2,12 +2,12 @@
 import { Formik, Form, FieldArray, FormikTouched } from 'formik';
 import { ShoeData, Gender, OnlySizesData, FormError, Age, Size } from '../../../types'
 import { SetStateAction } from 'react';
-import { TextField, InputLabel, FormControl, 
+import { TextField, InputLabel, FormControl, Input,
   Select, MenuItem, Button, Box, Typography, Container } from '@mui/material';
 import { validationSchema } from '../../../utils/ShoeFormSchema'
 
 interface SheFormProp {
-  submitState: FormError,
+  submitState: {error: boolean},
   onSubmit: (fields: ShoeData) => Promise<void>,
   data: ShoeData | null
 }
@@ -19,6 +19,7 @@ const ShoeForm = ({ submitState, onSubmit, data }: SheFormProp) => {
   //make a new initial value or make a copy of the passed data to edit.
   if (data == null) {
     initialValue = {
+      shoe_image: undefined,
       name: "",
       color: "",
       price: 0,
@@ -37,14 +38,14 @@ const ShoeForm = ({ submitState, onSubmit, data }: SheFormProp) => {
   }
   
   //creates a new obj to represent a size
-  const createNewSize = (values: ShoeData, setValues: { (values: SetStateAction<ShoeData>, shouldValidate?: boolean | undefined): void; (arg0: { sizes: OnlySizesData[]; name: string; color: string; price: number; gender: Gender | null; age: Age | null; }): void; }) => {
+  const createNewSize = (values: ShoeData, setValues: { (values: SetStateAction<ShoeData>, shouldValidate?: boolean | undefined): void; (arg0: { sizes: OnlySizesData[]; shoe_image: File | undefined; name: string; color: string; price: number; gender: Gender | null; age: Age | null; }): void; }) => {
     const newSizeArr: OnlySizesData[] = [...values.sizes]
     newSizeArr.push({ size: 0, quantity: 0 })
     setValues({ ...values, sizes: newSizeArr })
   }
 
   //remvoes an size from the array
-  const removeSize = (index: number, values: ShoeData, setValues: { (values: SetStateAction<ShoeData>, shouldValidate?: boolean | undefined): void; (arg0: { sizes: OnlySizesData[]; name: string; color: string; price: number; gender: Gender | null; age: Age | null; }): void; }) => {
+  const removeSize = (index: number, values: ShoeData, setValues: { (values: SetStateAction<ShoeData>, shouldValidate?: boolean | undefined): void; (arg0: { sizes: OnlySizesData[]; shoe_image: File | undefined; name: string; color: string; price: number; gender: Gender | null; age: Age | null; }): void; }) => {
     const newSizeArr: OnlySizesData[] = [...values.sizes]
     newSizeArr.splice(index, 1)
     setValues({ ...values, sizes: newSizeArr })
@@ -58,9 +59,6 @@ const ShoeForm = ({ submitState, onSubmit, data }: SheFormProp) => {
   }
 
   const checkHelperTextForSize = (touched: FormikTouched<Omit<Size, "id">>[] | undefined, error:any, i: number) => {
-    console.log("CHECK HELPER TEXT")
-    console.log("error: ", error)
-    console.log("touched", touched)
     if (error != undefined && error[i] != undefined && touched != undefined && touched[i] != undefined) {
       return touched[i].size && error[i].size
     }
@@ -75,9 +73,6 @@ const ShoeForm = ({ submitState, onSubmit, data }: SheFormProp) => {
   }
 
   const checkHelperTextForQuantity = (touched:any, error:any, i: number) => {
-    console.log("CHECK HELPER TEXT")
-    console.log("error: ", error)
-    console.log("touched", touched)
     if (error != undefined && error[i] != undefined && touched != undefined && touched[i] != undefined) {
       return touched[i].quantity && error[i].quantity
     }
@@ -99,9 +94,27 @@ const ShoeForm = ({ submitState, onSubmit, data }: SheFormProp) => {
     <>
       {Boolean(submitState.error) ? (<div>SERVER IS DOWN!</div>) : null}
       <Formik initialValues={initialValue} validationSchema={validationSchema} onSubmit={onSubmit}>
-        {({ errors, values, touched, setValues, handleChange }) => (
+        {({ errors, values, touched, setValues, handleChange, setFieldValue }) => (
           <Container maxWidth="sm" sx={{pt: '1.5rem'}}>
             <Form >
+              <InputLabel htmlFor="contained-button-file">
+                <Input 
+                  inputProps={{ accept: 'image/jpeg, image/png, image/jpg' }} 
+                  id="contained-button-file" 
+                  type="file"
+                  name="shoe_image"
+                  onChange={
+                    async (event) => {
+                      const target = event.target as HTMLInputElement
+                      if(target && target.files){
+                        console.log("TRUE", target.files[0])
+                        await setFieldValue("shoe_image", target.files[0])
+                      }
+                      console.log("VALUES: ",values)
+                    }
+                  }
+                 />
+              </InputLabel>
               <TextField
                 sx={style}
                 fullWidth

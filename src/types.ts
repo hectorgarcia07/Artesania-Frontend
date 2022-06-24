@@ -1,6 +1,7 @@
 import { AxiosResponse } from "axios"
 
 export interface Shoe {
+  url: string;
   id: string;
   name: string;
   color: string;
@@ -29,11 +30,17 @@ export enum Gender {
   UNISEX = 'unisex'
 }
 
-export type OnlyShoeData = Omit<Shoe, "id" | "sizes">
+export type OnlyShoeData = Omit<Shoe, "id" | "sizes" | "url">
 export type OnlySizesData = Omit<Size, 'id'>
 
 export interface ShoeData extends OnlyShoeData{
-  sizes: Omit<Size, 'id'>[]
+  sizes: Omit<Size, 'id'>[],
+  shoe_image: File | undefined
+}
+
+export interface ShoePostData extends OnlyShoeData {
+  sizes: Omit<Size, 'id'>[],
+  url: string
 }
 
 export interface FormError {

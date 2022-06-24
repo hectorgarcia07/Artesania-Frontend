@@ -4,13 +4,11 @@ import { useStateValue } from "./state";
 import ShoeServices from './services/shoes'
 import { useMatch, Route, Link, Routes, Navigate, PathMatch, useNavigate } from "react-router-dom";
 import SignIn from './components/forms/signin/SignIn'
-import { Box } from '@mui/material';
 import NotFound from './components/NotFound'
 import ProtectedRoute from './components/ProtectedRoutes'
 import CreateShoeForm from './components/forms/shoeForms/CreateShoeForm'
 import SingleShoeCard from './components/SingleShoeCard'
 import EditShoeForm from './components/forms/shoeForms/EditShoeForm'
-import { isTokenValid } from './utils/isTokenValid'
 import NavBar from './components/Navbar'
 
 function App() {
