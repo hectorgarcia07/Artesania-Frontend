@@ -26,7 +26,7 @@ const pages:PageType[] = [{
   }, 
   {
     key: 1,
-    name: 'Form', 
+    name: 'Create Shoe Entry', 
     link: "/createShoe"
   },
   {
@@ -98,7 +98,7 @@ const ResponsiveAppBar = () => {
     }
     return (
       isTokenValid() ?
-        <Button sx={{ my: 2, color: 'white', display: 'block' }} onClick={signOut}>
+        <Button sx={{ my: 2, color: 'white', display: 'block' }} onClick={signOut} key={page.key}>
           <Typography textAlign="center">Sign Out</Typography>
         </Button> :
         <Button

@@ -1,31 +1,20 @@
 import {
   Card, Box, Button, CardContent,
-  Typography, Container, 
+  Typography, Container, CardMedia, 
 } from '@mui/material/';
-import { Link, PathMatch } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Shoe } from '../types'
 import { useStateValue } from '../state';
 import { JSXElementConstructor, Key, ReactElement, ReactFragment, ReactPortal, useState } from 'react';
 import ShoeService from '../services/shoes' 
 import { useNavigate } from 'react-router-dom';
-
-/*
-<CardMedia
-        component="img"
-        alt="green iguana"
-        height="140"
-        image="/static/images/cards/contemplative-reptile.jpg"
-      />*/
+import ConfirmationBtn from './ConfirmationBtn'
 
 const SingleShoeCard = ({singleShoeData}:{singleShoeData: Shoe}) => {
   console.log("SNGEL SHOE CARD")
   const [state, dispatch] = useStateValue();
   const navigate = useNavigate()
-  const [ toggleDeleteBtn, setToggleDeleteBtn ] = useState(false);
-  /* if(singleShoeData == null){
-    return <></>
-  }
- */
+  
   const deleteShoe = async() => {
     const token = JSON.parse(localStorage.getItem("token")!)
     const response = await ShoeService.deleteShoeEntry(singleShoeData.id, token)
@@ -46,6 +35,12 @@ const SingleShoeCard = ({singleShoeData}:{singleShoeData: Shoe}) => {
     <Container maxWidth="sm" sx={{pt: "1.5rem"}}>
       <Card>
         <CardContent>
+          <CardMedia
+            component="img"
+            alt="Product image"
+            sx={{maxWidth: "100%"}}
+            src={singleShoeData.url}
+          />
           <Box>
             <Typography gutterBottom variant="h5" component="div">
               {singleShoeData.name}
@@ -104,25 +99,16 @@ const SingleShoeCard = ({singleShoeData}:{singleShoeData: Shoe}) => {
             ))
           }
           <Link to={`/updateShoe/${singleShoeData.id}`}>
-            <Button variant="contained">
+            <Button variant="contained" sx={{mb: "1rem"}}>
               Update Shoe Data
             </Button>
           </Link>
-          <Button sx={{color: "red"}} 
-            onClick={() => setToggleDeleteBtn(true)}>
-            Delete
-          </Button>
-          { !toggleDeleteBtn ? 
-              null :
-              <Box sx={{pt: "1.5rem"}}>
-                <Button onClick={deleteShoe} sx={{color: "red"}} >
-                  Delete permenetly!
-                </Button>
-                <Button onClick={() => setToggleDeleteBtn(false)}>
-                  Dont delete
-                </Button>
-              </Box>
-          }
+          <ConfirmationBtn value={singleShoeData.sizes[0]} description={"Delete shoe information and size"}>
+            <Button sx={{color: "red"}} 
+              onClick={deleteShoe}>
+              Delete
+            </Button>
+          </ConfirmationBtn>
         </CardContent>
       </Card>
     </Container>

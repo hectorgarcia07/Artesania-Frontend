@@ -6,18 +6,22 @@ import {
 } from '@mui/material'
 import { styled } from '@mui/material/styles';
 
-/* const ProductImgStyle = styled('img')({
+const ProductImgStyle = styled('img')({
   top: 0,
   width: '100%',
   height: '100%',
   objectFit: 'cover',
   position: 'absolute',
-}); */
+});
 
 const ShoeList = ({shoe}:{shoe: Shoe} ) => {
+  console.log(shoe)
   return (
     <Card>
       <CardContent>
+      <Box sx={{ pt: '100%', position: 'relative' }}>
+        <ProductImgStyle alt={"Image product"} src={shoe.url} />
+      </Box>
         <Box >
           <Typography variant="h5">
             {shoe.name}

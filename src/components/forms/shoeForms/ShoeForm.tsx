@@ -1,10 +1,11 @@
 /* eslint-disable no-extra-boolean-cast */
 import { Formik, Form, FieldArray, FormikTouched } from 'formik';
-import { ShoeData, Gender, OnlySizesData, FormError, Age, Size } from '../../../types'
+import { ShoeData, Gender, OnlySizesData, Age, Size } from '../../../types'
 import { SetStateAction } from 'react';
 import { TextField, InputLabel, FormControl, Input,
   Select, MenuItem, Button, Box, Typography, Container } from '@mui/material';
 import { validationSchema } from '../../../utils/ShoeFormSchema'
+import TransitionsModal from '../../ConfirmationBtn'
 
 interface SheFormProp {
   submitState: {error: boolean},
@@ -97,7 +98,7 @@ const ShoeForm = ({ submitState, onSubmit, data }: SheFormProp) => {
         {({ errors, values, touched, setValues, handleChange, setFieldValue }) => (
           <Container maxWidth="sm" sx={{pt: '1.5rem'}}>
             <Form >
-              <InputLabel htmlFor="contained-button-file">
+              <InputLabel htmlFor="contained-button-file" sx={{mb: '2rem'}}>
                 <Input 
                   inputProps={{ accept: 'image/jpeg, image/png, image/jpg' }} 
                   id="contained-button-file" 
@@ -209,15 +210,17 @@ const ShoeForm = ({ submitState, onSubmit, data }: SheFormProp) => {
                         onChange={handleChange}
                         error={checkErrorForQuantity(touched.sizes, errors.sizes, i)}
                         helperText={checkHelperTextForQuantity(touched.sizes, errors.sizes, i)}
-                        />
-
-                      <Button 
-                        onClick={() => removeSize(i, values, setValues)} 
-                        type="button"
-                        variant="contained"
-                      >
-                        Remove Size
-                      </Button>
+                      />
+                      
+                      <TransitionsModal value={values.sizes[i]} description={"Delete Size"}>
+                        <Button 
+                          onClick={() => removeSize(i, values, setValues)} 
+                          type="button"
+                          sx={{color: 'red'}}
+                        >
+                          Delete Permanently
+                        </Button>
+                      </TransitionsModal>
                     </Box>
                   )
                 }))}

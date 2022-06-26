@@ -37,6 +37,9 @@ const EditShoeForm = ({shoeData}:{shoeData: Shoe}) => {
           url = img_response
         }
       }
+      else{
+        url = oldUrl
+      }
       const {shoe_image, ...fieldsData } = fields
       const updatedFieldData = {...fieldsData, url}
 

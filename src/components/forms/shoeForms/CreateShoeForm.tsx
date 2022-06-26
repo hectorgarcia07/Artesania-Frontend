@@ -19,9 +19,12 @@ const CreateShoeForm = () => {
     let url = ''
 
     //if image was uploaded, then check to see if you can save it and save the url
-    if(fields.shoe_image && fields.shoe_image instanceof File){
+    if(fields.shoe_image instanceof File){
       const img_response = await ShoeServices.uploadImage(fields.shoe_image, token)
       url = img_response ? img_response : pathToDefault
+    }
+    else{
+      url = pathToDefault
     }
     const { shoe_image, ...other } = fields
     //create new object to post excluding shoe_image and adding url
