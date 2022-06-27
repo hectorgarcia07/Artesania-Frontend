@@ -53,3 +53,4 @@ https://medium.com/developer-rants/deploying-typescript-node-js-applications-to-
 https://www.topcoder.com/thrive/articles/authentication-and-authorization-in-express-js-api-using-jwt
 https://stackoverflow.com/questions/69911904/react-router-6-and-typescript-why-doesnt-it-pass-components-through-props
 https://stackoverflow.com/questions/69864165/error-privateroute-is-not-a-route-component-all-component-children-of-rou
+https://stackoverflow.com/questions/57864113/multer-s3-with-sharp-upload-and-resize/70114704#70114704

@@ -11,12 +11,12 @@ const Shoes = () => {
       <Typography variant="h4" sx={{ m: 1 }}>
         Shoes
       </Typography>
-      <Grid container spacing={3} >
+      <Grid container sx={{justifyContent: 'center'}} spacing={8} >
         { 
           Object
             .values(state.shoes)
             .map((shoe:Shoe) => 
-              <Grid key={shoe.id} item xs={12} sm={6} md={3}>
+              <Grid key={shoe.id} item xs={10} sm={6} md={4}>
                 <ShoeList shoe={shoe} />
               </Grid>
             )

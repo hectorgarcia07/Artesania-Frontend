@@ -30,10 +30,8 @@ export default function TransitionsModal({children, value, description}: ModalPr
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
-  React.useEffect(() => {
-    handleClose()
-  }, [value])
+  console.log(' CHECKING FOR RE RENDER ', value)
+  
 
   return (
     <div>
