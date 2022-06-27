@@ -31,7 +31,6 @@ export default function TransitionsModal({children, value, description}: ModalPr
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   console.log(' CHECKING FOR RE RENDER ', value)
-  
 
   return (
     <div>
