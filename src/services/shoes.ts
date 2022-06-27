@@ -61,7 +61,7 @@ const uploadImage = async (img:File, token:string) => {
     const config = getConfig(token)
     const formData = new FormData()
     formData.append("shoe_image", img)
-    console.log("FILE TO SEND: ", img, "CONFIG ", config)
+    console.log("FILE TO SEND: ", img, "CONFIG ", formData)
     const response = await axios.post(`${baseUrl}/img`, formData, config)
     console.log("SUCCESS ", response.data)
     return response.data.link

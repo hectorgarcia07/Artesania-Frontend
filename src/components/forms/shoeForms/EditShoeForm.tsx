@@ -19,12 +19,14 @@ const EditShoeForm = ({shoeData}:{shoeData: Shoe}) => {
   const shoeDataToModify = {...restOfData, shoe_image: undefined}
 
   const onSubmit = async (fields:ShoeData) => {
+    console.log("Submitting ")
     try{
       const token = JSON.parse(localStorage.getItem("token")!)
       let url = ''
 
       //update new image of shoe
       if(fields.shoe_image instanceof File){
+        console.log("About to upload image")
         const img_response = await ShoeServices.uploadImage(fields.shoe_image, token)
 
         if(!img_response && oldUrl){
@@ -42,7 +44,7 @@ const EditShoeForm = ({shoeData}:{shoeData: Shoe}) => {
       }
       const {shoe_image, ...fieldsData } = fields
       const updatedFieldData = {...fieldsData, url}
-
+      console.log("About to modify ", updatedFieldData)
       const response = await ShoeServices.updateShoeEntry(shoeData.id, updatedFieldData, token)
       if(response.status === 200){
         dispatch({ type: "UPDATE_SHOE", payload: response.data })
