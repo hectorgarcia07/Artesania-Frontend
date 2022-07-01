@@ -7,7 +7,6 @@ const signin = async (credentials:{username: string, password:string}) => {
     const response = await axios.post(`${baseUrl}/signin`, credentials)
     return response;
   }catch(error ){
-     // check if the error was thrown from axios
     if (axios.isAxiosError(error)) {
       console.log('error ', error.response)
       return error.response

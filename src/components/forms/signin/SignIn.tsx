@@ -4,45 +4,38 @@ import {Button, CssBaseline, TextField, Box, Typography, Container, AlertColor }
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import auth from '../../../services/auth';
 import TransitionAlerts from "../../Alerts/alert"
-import { useStateValue } from '../../../state';
 import { useNotification } from '../../../hooks/useNotification'
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Shoe } from '../../../types';
 
 const theme = createTheme();
 
 export default function SignIn() {
   console.log("IN SING IN PAGE ")
 
-  const [state, dispatch] = useStateValue();
   const { status, setStatus } = useNotification()
   const navigate = useNavigate()
   const location = useLocation()
 
   const handleSubmit = async (values:{username: string, password: string}) => {
     const response = await auth.signin(values);
+    console.log("RESPONSE ", response)
+    if(response && response.data.success){
+      setStatus({ isActive: true, message: 'Logging in!', severityType: "success" })
+      localStorage.setItem('token', JSON.stringify(response.data.token))
+      const state = location.state as { from: Location }
+      console.log(response.data)
 
-    if(response && response.status){
-      if(response.status === 200){
-        setStatus({ isActive: true, message: 'Logging in!', severityType: "success" }) 
-        localStorage.setItem('token', JSON.stringify(response.data.token))
-        const state = location.state as { from: Location }
-
-        if(state && state.from ){
-          console.log('from ', state)
-          navigate(state.from)
-        }else{
-          navigate('/');
-        }
-        
+      if(state && state.from ){
+        console.log('from ', state)
+        navigate(state.from)
+      }else{
+        navigate('/');
       }
-      else if(response.status === 401){
-        setStatus({ isActive: true, message: 'Invalid username or password', severityType: "warning" }) 
-      }
-      else{
-        setStatus({ isActive: true, message: 'Error internal error from server. Opps.', severityType: "warning" }) 
-      }
-    }else{
+    }
+    else if(response && !response.data.success){
+      setStatus({ isActive: true, message: 'Invalid username or password', severityType: "warning" }) 
+    }
+    else{
       setStatus({ isActive: true, message: 'Something went seriously wrong. Hmmm', severityType: "warning" }) 
     }
   };

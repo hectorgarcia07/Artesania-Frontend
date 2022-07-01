@@ -94,7 +94,7 @@ const ShoeForm = ({ submitState, onSubmit, data }: SheFormProp) => {
   return (
     <>
       {Boolean(submitState.error) ? (<div>SERVER IS DOWN!</div>) : null}
-      <Formik initialValues={initialValue} validationSchema={validationSchema} onSubmit={onSubmit}>
+      <Formik initialValues={initialValue} validateOnChange={false} validationSchema={validationSchema} onSubmit={onSubmit}>
         {({ errors, values, touched, setValues, handleChange, setFieldValue }) => (
           <Container maxWidth="sm" sx={{pt: '1.5rem'}}>
             <Form >

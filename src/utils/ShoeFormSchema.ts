@@ -23,10 +23,14 @@ export const validationSchema = yup.object().shape({
         .integer("Must enter a number")
         .moreThan(-1, "Cannot be negative")
         .required('A quantity is required')
-    })).min(1).test('unique', {unique: 'Needs to be unique'}, function (list) {
+    })).min(1)
+})
+
+/*
+.test('unique', {unique: 'Needs to be unique'}, function (list) {
       if(list === undefined){
         return false
       }
       return list?.length === new Set(list?.map(s => s.size)).size;
     })
-})
+*/
