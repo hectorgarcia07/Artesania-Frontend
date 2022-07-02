@@ -2,7 +2,7 @@ import Shoes from './components/Shoes'
 import { useEffect } from 'react';
 import { useStateValue } from "./state";
 import ShoeServices from './services/shoes'
-import { useMatch, Route, Link, Routes, Navigate, PathMatch, useNavigate } from "react-router-dom";
+import { useMatch, Route, Routes, Navigate, PathMatch } from "react-router-dom";
 import SignIn from './components/forms/signin/SignIn'
 import NotFound from './components/NotFound'
 import ProtectedRoute from './components/ProtectedRoutes'
@@ -24,7 +24,6 @@ function App() {
   const viewShoe = useMatch('/shoe/:id')
   const shoeData = getShoeFromID(updateMatch)
   const singleShoeData = getShoeFromID(viewShoe)
-  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchPatientList = async () => {
@@ -38,6 +37,23 @@ function App() {
     };
     void fetchPatientList(); 
   }, [dispatch]);
+
+  /*
+ <Route path="/" element={<ProtectedRoute />} >
+          <Route path="createShoe" element={<CreateShoeForm />} />
+          <Route path="shoe/:id" element={ 
+            singleShoeData ?
+            <SingleShoeCard singleShoeData={singleShoeData} /> :
+            null
+          } />
+          <Route path="updateShoe/:id" element={
+            shoeData ?
+            <EditShoeForm shoeData={shoeData} /> :
+            null
+          }
+          />
+        </Route>
+  */
 
   return (
     <>
