@@ -1,3 +1,4 @@
+import { AlertColor } from "@mui/material";
 import { AxiosResponse } from "axios"
 
 export interface Shoe {
@@ -45,4 +46,11 @@ export interface ShoePostData extends OnlyShoeData {
 
 export interface FormError {
   error: AxiosResponse<any, any> | undefined
+}
+
+export interface Alert{
+  isLoading: boolean;
+  severityType: AlertColor;
+  message: string;
+  isActive: boolean;
 }

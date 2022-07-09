@@ -1,13 +1,20 @@
 import React, { createContext, useContext, useReducer } from "react";
-import { Shoe } from "../types";
+import { Shoe, Alert } from "../types";
 import { Action } from "./reducer";
 
 export type State = {
   shoes: { [id: string]: Shoe };
+  alert: Alert;
 };
 
 const initialState: State = {
   shoes: {},
+  alert: {
+    isLoading: false,
+    severityType: 'success',
+    message: '',
+    isActive: false
+  }
 };
 
 //The context of that will be used

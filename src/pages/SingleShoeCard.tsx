@@ -8,7 +8,7 @@ import { useStateValue } from '../state';
 import { JSXElementConstructor, Key, ReactElement, ReactFragment, ReactPortal, useState } from 'react';
 import ShoeService from '../services/shoes' 
 import { useNavigate } from 'react-router-dom';
-import ConfirmationBtn from './ConfirmationBtn'
+import ConfirmationBtn from '../components/ConfirmationBtn'
 
 const SingleShoeCard = ({singleShoeData}:{singleShoeData: Shoe}) => {
   console.log("SNGEL SHOE CARD")

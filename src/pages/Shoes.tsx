@@ -1,7 +1,7 @@
 import { Container, Stack, Typography,Grid } from '@mui/material';
 import { useStateValue } from "../state";
 import {Shoe} from '../types'
-import ShoeList from './ShoeList'
+import ShoeList from '../components/ShoeList'
 
 const Shoes = () => {
   const [state, dispatch] = useStateValue();

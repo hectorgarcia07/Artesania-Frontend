@@ -1,9 +1,8 @@
 import { useFormik } from 'formik';
 import {validationSchema, initialState} from '../../../utils/SignInSchema'
-import {Button, CssBaseline, TextField, Box, Typography, Container, AlertColor } from '@mui/material/';
+import {Button, CssBaseline, TextField, Box, Typography, Container } from '@mui/material/';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import auth from '../../../services/auth';
-import TransitionAlerts from "../../Alerts/alert"
 import { useNotification } from '../../../hooks/useNotification'
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -22,6 +21,7 @@ export default function SignIn() {
     if(response && response.data.success){
       setStatus({ isActive: true, message: 'Logging in!', severityType: "success" })
       localStorage.setItem('token', JSON.stringify(response.data.token))
+      localStorage.setItem('user', JSON.stringify(response.data.user))
       const state = location.state as { from: Location }
       console.log(response.data)
 
@@ -48,15 +48,7 @@ export default function SignIn() {
 
   return (
     <ThemeProvider theme={theme}>
-      { status.isActive ? 
-        <TransitionAlerts 
-          severityType={status.severityType} 
-          message={status.message} 
-          isActive={status.isActive}
-          setStatus={setStatus} 
-        /> :
-        null
-      }
+      
       <Container maxWidth="xs">
         <CssBaseline />
         <Box

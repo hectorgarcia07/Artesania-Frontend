@@ -1,5 +1,5 @@
 import { State } from "./state";
-import { Shoe } from "../types";
+import { Shoe, Alert } from "../types";
 
 export type Action =
   | {
@@ -11,13 +11,17 @@ export type Action =
       payload: Shoe;
     }
   | {
-    type: 'UPDATE_SHOE',
-    payload: Shoe;
+      type: 'UPDATE_SHOE',
+      payload: Shoe;
     }
   | {
-    type: 'DELTE_SHOE',
-    payload: string;
-   }
+      type: 'DELTE_SHOE',
+      payload: string;
+    }
+  | {
+      type: 'UPDATE_ALERT',
+      payload: Alert
+    }
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -52,6 +56,11 @@ export const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         shoes: deleteFromState(action.payload, state.shoes)
+      }
+    case "UPDATE_ALERT":
+      return {
+        ...state,
+        alert: action.payload
       }
     default:
       return state;

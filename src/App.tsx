@@ -1,15 +1,16 @@
-import Shoes from './components/Shoes'
+import Shoes from './pages/Shoes'
 import { useEffect } from 'react';
 import { useStateValue } from "./state";
 import ShoeServices from './services/shoes'
 import { useMatch, Route, Routes, Navigate, PathMatch } from "react-router-dom";
 import SignIn from './components/forms/signin/SignIn'
-import NotFound from './components/NotFound'
+import NotFound from './pages/NotFound'
 import ProtectedRoute from './components/ProtectedRoutes'
 import CreateShoeForm from './components/forms/shoeForms/CreateShoeForm'
-import SingleShoeCard from './components/SingleShoeCard'
+import SingleShoeCard from './pages/SingleShoeCard'
 import EditShoeForm from './components/forms/shoeForms/EditShoeForm'
 import NavBar from './components/Navbar'
+import Alert from './components/Alerts/alert'
 
 function App() {
   const getShoeFromID = (id:PathMatch<"id"> | null) => {
@@ -38,26 +39,10 @@ function App() {
     void fetchPatientList(); 
   }, [dispatch]);
 
-  /*
- <Route path="/" element={<ProtectedRoute />} >
-          <Route path="createShoe" element={<CreateShoeForm />} />
-          <Route path="shoe/:id" element={ 
-            singleShoeData ?
-            <SingleShoeCard singleShoeData={singleShoeData} /> :
-            null
-          } />
-          <Route path="updateShoe/:id" element={
-            shoeData ?
-            <EditShoeForm shoeData={shoeData} /> :
-            null
-          }
-          />
-        </Route>
-  */
-
   return (
     <>
       <NavBar />
+      { state.alert.isActive && <Alert {...state.alert} /> }
       <Routes>
         <Route path="/" element={<Shoes />} />
         <Route path="/signin"  element={ localStorage.getItem('token') ? <Navigate replace to="/" /> : <SignIn /> } />

@@ -14,10 +14,12 @@ export const isTokenValid = () => {
       if (decodedToken.exp * 1000 < currentDate.getTime()) {
         console.log("Token expired.");
         localStorage.removeItem('token')
+        localStorage.removeItem('user')
         return false
       }
     }catch(e:unknown){
       localStorage.removeItem('token')
+      localStorage.removeItem('user')
       if(e instanceof Error){
         console.log(e.message)
       }
