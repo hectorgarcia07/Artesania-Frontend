@@ -8,7 +8,7 @@ import { validationSchema } from '../../../utils/ShoeFormSchema'
 import TransitionsModal from '../../ConfirmationBtn'
 
 interface SheFormProp {
-  submitState: {error: boolean},
+  submitState: {error: boolean, submitStatus: boolean},
   onSubmit: (fields: ShoeData) => Promise<void>,
   data: ShoeData | null
 }
@@ -229,7 +229,9 @@ const ShoeForm = ({ submitState, onSubmit, data }: SheFormProp) => {
                 <Button onClick={() => createNewSize(values, setValues)} variant="contained">Add new size</Button>
               </Box>
               <Box sx={style}> 
-                <Button type="submit" variant="contained">Submit</Button>
+                <Button type="submit" variant="contained" disabled={submitState.submitStatus}>
+                  Submit
+                </Button>
               </Box>
             </Form>
           </Container>

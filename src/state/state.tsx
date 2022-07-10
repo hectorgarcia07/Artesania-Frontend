@@ -35,6 +35,7 @@ export const StateProvider = ({
   children
 }: StateProviderProps) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  
   return (
     <StateContext.Provider value={[state, dispatch]}>
       {children}

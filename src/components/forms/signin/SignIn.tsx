@@ -3,15 +3,16 @@ import {validationSchema, initialState} from '../../../utils/SignInSchema'
 import {Button, CssBaseline, TextField, Box, Typography, Container } from '@mui/material/';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import auth from '../../../services/auth';
-import { useNotification } from '../../../hooks/useNotification'
 import { useLocation, useNavigate } from 'react-router-dom';
+import { updateAlert } from '../../../utils/AlertsUtils';
+import { useStateValue } from '../../../state';
 
 const theme = createTheme();
 
 export default function SignIn() {
   console.log("IN SING IN PAGE ")
 
-  const { status, setStatus } = useNotification()
+  const [, dispatch] = useStateValue();
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -19,7 +20,17 @@ export default function SignIn() {
     const response = await auth.signin(values);
     console.log("RESPONSE ", response)
     if(response && response.data.success){
-      setStatus({ isActive: true, message: 'Logging in!', severityType: "success" })
+      updateAlert(
+        {
+          alertProps: {
+          isLoading: false,
+          severityType: 'success',
+          message: 'Signed in successfully!',
+          isActive: true
+          },
+          dispatchObj: dispatch
+      })
+      
       localStorage.setItem('token', JSON.stringify(response.data.token))
       localStorage.setItem('user', JSON.stringify(response.data.user))
       const state = location.state as { from: Location }
@@ -33,10 +44,26 @@ export default function SignIn() {
       }
     }
     else if(response && !response.data.success){
-      setStatus({ isActive: true, message: 'Invalid username or password', severityType: "warning" }) 
+      updateAlert({
+        alertProps:{
+          isLoading: false,
+          severityType: 'error',
+          message: 'Invalid username or password',
+          isActive: true
+        },
+        dispatchObj: dispatch
+      })
     }
     else{
-      setStatus({ isActive: true, message: 'Something went seriously wrong. Hmmm', severityType: "warning" }) 
+      updateAlert({
+        alertProps:{
+          isLoading: false,
+          severityType: 'error',
+          message: 'Something went seriously wrong. Hmm...',
+          isActive: true
+        },
+        dispatchObj: dispatch
+      })
     }
   };
 

@@ -1,4 +1,4 @@
-import { ShoeData, FormError, Shoe } from "../../../types"
+import { ShoeData, Shoe } from "../../../types"
 import ShoeServices from '../../../services/shoes'
 import { useStateValue } from "../../../state";
 import ShoeForm from "./ShoeForm";
@@ -6,10 +6,12 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from 'react-router-dom'
 import { pathToDefault } from "../../../utils/pathToDefault";
+import { updateAlert, loadingAlert } from "../../../utils/AlertsUtils";
 
 const EditShoeForm = ({shoeData}:{shoeData: Shoe}) => {
   const [submitState, setSubmitState] = useState({
-    error: false
+    error: false,
+    submitStatus: false
   })
   const [, dispatch] = useStateValue()
   const navigate = useNavigate()
@@ -20,6 +22,20 @@ const EditShoeForm = ({shoeData}:{shoeData: Shoe}) => {
 
   const onSubmit = async (fields:ShoeData) => {
     console.log("Submitting ")
+    setSubmitState({
+      error: false,
+      submitStatus: true
+    })
+
+    loadingAlert({
+      alertProps: {
+      isLoading: true,
+      severityType: 'info',
+      message: 'Submitting info. Please wait...',
+      isActive: true
+      },
+      dispatchObj: dispatch
+    })
     try{
       const token = JSON.parse(localStorage.getItem("token")!)
       let url = ''
@@ -47,13 +63,33 @@ const EditShoeForm = ({shoeData}:{shoeData: Shoe}) => {
       console.log("About to modify ", updatedFieldData)
       const response = await ShoeServices.updateShoeEntry(shoeData.id, updatedFieldData, token)
       if(response.status === 200){
+        updateAlert({
+          alertProps: {
+          isLoading: false,
+          severityType: 'success',
+          message: 'Updated a shoe.',
+          isActive: true
+          },
+          dispatchObj: dispatch
+        })
+
         dispatch({ type: "UPDATE_SHOE", payload: response.data })
         navigate('/')
       }
     }catch(err: unknown){
       console.log("ERROR UPDAGING")
+      updateAlert({
+        alertProps: {
+        isLoading: false,
+        severityType: 'error',
+        message: 'Error updating a shoe. Please try again.',
+        isActive: true
+        },
+        dispatchObj: dispatch
+      })
+
       if (axios.isAxiosError(err)) {
-        setSubmitState({ error: true})
+        setSubmitState({ error: true, submitStatus: false})
         console.log("AXIOS ", err.message, err.response?.status)
         localStorage.removeItem('token')
         navigate('/signin', {replace: true, state: {from: location, data: shoeData}} )
