@@ -5,7 +5,7 @@ import {
 import { Link } from 'react-router-dom';
 import { Shoe } from '../types'
 import { useStateValue } from '../state';
-import { JSXElementConstructor, Key, ReactElement, ReactFragment, ReactPortal, useState } from 'react';
+import { JSXElementConstructor, Key, ReactElement, ReactFragment, ReactPortal } from 'react';
 import ShoeService from '../services/shoes' 
 import { useNavigate } from 'react-router-dom';
 import ConfirmationBtn from '../components/ConfirmationBtn'

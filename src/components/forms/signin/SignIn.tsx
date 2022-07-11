@@ -4,7 +4,7 @@ import {Button, CssBaseline, TextField, Box, Typography, Container } from '@mui/
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import auth from '../../../services/auth';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { updateAlert } from '../../../utils/AlertsUtils';
+import { updateAlert, loadingAlert } from '../../../utils/AlertsUtils';
 import { useStateValue } from '../../../state';
 
 const theme = createTheme();
@@ -12,11 +12,21 @@ const theme = createTheme();
 export default function SignIn() {
   console.log("IN SING IN PAGE ")
 
-  const [, dispatch] = useStateValue();
+  const [state, dispatch] = useStateValue();
   const navigate = useNavigate()
   const location = useLocation()
 
   const handleSubmit = async (values:{username: string, password: string}) => {
+    loadingAlert({
+      alertProps: {
+      isLoading: true,
+      severityType: 'info',
+      message: 'Sigining in. Please wait...',
+      isActive: true
+      },
+      dispatchObj: dispatch
+    })
+
     const response = await auth.signin(values);
     console.log("RESPONSE ", response)
     if(response && response.data.success){
@@ -117,6 +127,7 @@ export default function SignIn() {
               type="submit"
               fullWidth
               variant="contained"
+              disabled={state.alert.isLoading}
               sx={{ mt: 3, mb: 2 }}
             >
               Sign In
