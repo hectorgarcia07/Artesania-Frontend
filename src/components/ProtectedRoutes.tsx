@@ -4,21 +4,25 @@ import { updateAlert } from '../utils/AlertsUtils'
 import { useStateValue } from '../state' 
 
 const ProtectedRoute = () => {
+  console.log("Checking validity")
   const [, dispatch] = useStateValue();
   const location = useLocation()
   const token = localStorage.getItem('token');
 
-  if(!isTokenValid()){
-    updateAlert(
-      {
-        alertProps: {
+  const result = isTokenValid()
+
+  if(result.valid){
+    updateAlert({
+      alertProps: {
         isLoading: false,
         severityType: 'error',
-        message: 'Session expired. Please sign in again.',
+        message: result.message,
         isActive: true
-        },
-        dispatchObj: dispatch
+      },
+      dispatchObj: dispatch
     })
+    console.log("Redireting to sign in");
+    
     return <Navigate to="signin" replace state={{from: location}} />
   }
 

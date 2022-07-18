@@ -11,6 +11,7 @@ import SingleShoeCard from './pages/SingleShoeCard'
 import EditShoeForm from './components/forms/shoeForms/EditShoeForm'
 import NavBar from './components/Navbar'
 import Alert from './components/Alerts/alert'
+import { isTokenValid } from '../src/utils/isTokenValid'
 
 function App() {
   const getShoeFromID = (id:PathMatch<"id"> | null) => {
@@ -26,7 +27,7 @@ function App() {
   const shoeData = getShoeFromID(updateMatch)
   const singleShoeData = getShoeFromID(viewShoe)
 
-  useEffect(() => {
+  /* useEffect(() => {
     const fetchPatientList = async () => {
       try {
         const shoeListFromApi = await ShoeServices.getAll();
@@ -37,16 +38,16 @@ function App() {
       }
     };
     void fetchPatientList(); 
-  }, [dispatch]);
+  }, [dispatch]); */
 
   return (
     <>
       <NavBar />
       { state.alert.isActive && <Alert {...state.alert} /> }
       <Routes>
-        <Route path="/" element={<Shoes />} />
-        <Route path="/signin"  element={ localStorage.getItem('token') ? <Navigate replace to="/" /> : <SignIn /> } />
+        <Route path="/signin" element={ isTokenValid() ? <Navigate replace to="/" /> : <SignIn /> } />
         <Route path="/" element={<ProtectedRoute />} >
+          <Route path="" element={ <Shoes /> } />
           <Route path="createShoe" element={<CreateShoeForm />} />
           <Route path="shoe/:id" element={ 
             singleShoeData ?
@@ -58,7 +59,7 @@ function App() {
             <EditShoeForm shoeData={shoeData} /> :
             null
           }
-          />
+        />
         </Route>
         <Route path="/not-found" element={<NotFound /> } />
         <Route path="*" element={<p>{"There's nothing here: 404!"}</p>} />

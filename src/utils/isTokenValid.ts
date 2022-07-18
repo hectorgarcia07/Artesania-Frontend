@@ -2,30 +2,33 @@ import jwt_decode from "jwt-decode";
 
 export const isTokenValid = () => {
   const token = localStorage.getItem('token');
+  const tokenResult = { valid: false, message: '' }
   if(!token){
-    return false
+    tokenResult.message = 'Please sign in.'
+    return tokenResult
   }else{
     try{
       const decodedToken:any = jwt_decode(JSON.parse(token));
-      console.log("Decoded Token", decodedToken);
       const currentDate = new Date();
 
       // JWT exp is in seconds
       if (decodedToken.exp * 1000 < currentDate.getTime()) {
-        console.log("Token expired.");
+        tokenResult.message = 'Session expired. Please sign in again.'
         localStorage.removeItem('token')
         localStorage.removeItem('user')
-        return false
+        return tokenResult
       }
     }catch(e:unknown){
       localStorage.removeItem('token')
       localStorage.removeItem('user')
+      tokenResult.message = 'Internal error.'
       if(e instanceof Error){
         console.log(e.message)
       }
-      return false
+      return tokenResult
     }
     
   }
-  return true;
+  tokenResult.valid = true
+  return tokenResult;
 }

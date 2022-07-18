@@ -31,6 +31,11 @@ export enum Gender {
   UNISEX = 'unisex'
 }
 
+export enum Role {
+  ADMIN = 'admin',
+  NORMAL = 'normal'
+}
+
 export type OnlyShoeData = Omit<Shoe, "id" | "sizes" | "url">
 export type OnlySizesData = Omit<Size, 'id'>
 
@@ -54,3 +59,18 @@ export interface Alert{
   message: string;
   isActive: boolean;
 }
+
+export type User = UserObj | null
+
+interface UserObj{
+  username: string,
+  role: Role,
+  id: string
+}
+
+export interface UserAuth {
+  token: Token,
+  user: User
+}
+
+export type Token = string | null

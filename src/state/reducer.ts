@@ -1,5 +1,5 @@
 import { State } from "./state";
-import { Shoe, Alert } from "../types";
+import { Shoe, Alert, UserAuth } from "../types";
 
 export type Action =
   | {
@@ -21,6 +21,13 @@ export type Action =
   | {
       type: 'UPDATE_ALERT',
       payload: Alert
+    }
+  | {
+      type: 'SIGN_IN',
+      paloyad: UserAuth
+    }
+  | {
+      type: 'SIGN_OUT'
     }
 
 export const reducer = (state: State, action: Action): State => {
@@ -61,6 +68,18 @@ export const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         alert: action.payload
+      }
+    case 'SIGN_IN':
+      return {
+        ...state,
+        user: action.paloyad.user,
+        token: action.paloyad.token
+      }
+    case 'SIGN_OUT':
+      return {
+        ...state,
+        user: null,
+        token: null
       }
     default:
       return state;

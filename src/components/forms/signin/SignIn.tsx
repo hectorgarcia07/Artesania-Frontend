@@ -6,6 +6,7 @@ import auth from '../../../services/auth';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { updateAlert, loadingAlert } from '../../../utils/AlertsUtils';
 import { useStateValue } from '../../../state';
+import { SignInResponse } from '../../../utils/signInTypeCheck';
 
 const theme = createTheme();
 
@@ -27,9 +28,9 @@ export default function SignIn() {
       dispatchObj: dispatch
     })
 
-    const response = await auth.signin(values);
+    const response:SignInResponse = await auth.signin(values);
     console.log("RESPONSE ", response)
-    if(response && response.data.success){
+    if(response && response.success && response.token && response.user){
       updateAlert(
         {
           alertProps: {
@@ -41,10 +42,11 @@ export default function SignIn() {
           dispatchObj: dispatch
       })
       
-      localStorage.setItem('token', JSON.stringify(response.data.token))
-      localStorage.setItem('user', JSON.stringify(response.data.user))
+      localStorage.setItem('token', JSON.stringify(response.token))
+      localStorage.setItem('user', JSON.stringify(response.user))
       const state = location.state as { from: Location }
-      console.log(response.data)
+      
+      dispatch({ type: 'SIGN_IN', paloyad: { token: response.token, user: response.user }})
 
       if(state && state.from ){
         console.log('from ', state)
@@ -53,7 +55,7 @@ export default function SignIn() {
         navigate('/');
       }
     }
-    else if(response && !response.data.success){
+    else if(response && !response.success){
       updateAlert({
         alertProps:{
           isLoading: false,

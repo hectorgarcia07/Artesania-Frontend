@@ -11,7 +11,8 @@ import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import { Link, useNavigate } from 'react-router-dom'
 import { isTokenValid } from '../utils/isTokenValid'
-
+import { useStateValue } from '../state'
+import { updateAlert } from '../utils/AlertsUtils'
 
 interface PageType {
   key: number;
@@ -50,6 +51,8 @@ const navStyle = {
 
 const ResponsiveAppBar = () => {
   const navigate = useNavigate()
+  const [state, dispatch] = useStateValue()
+
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -62,6 +65,19 @@ const ResponsiveAppBar = () => {
 
   const signOut = () => {
     localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    dispatch({ type: 'SIGN_OUT' })
+    updateAlert(
+      {
+        alertProps: {
+        isLoading: false,
+        severityType: 'success',
+        message: 'Successfully signed out',
+        isActive: true
+        },
+        dispatchObj: dispatch
+    })
+
     navigate('/')
   }
 
@@ -74,7 +90,7 @@ const ResponsiveAppBar = () => {
       )
     }
     return(
-      isTokenValid() ? 
+      isTokenValid().valid ? 
       <Typography textAlign="center" onClick={signOut} sx={{padding: "0.5rem 1rem"}}>Sign Out</Typography>: 
         <Link to={page.link} style={btnStyle}>
           <Typography textAlign="center">{page.name}</Typography>
