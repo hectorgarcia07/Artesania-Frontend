@@ -4,6 +4,7 @@ export const isTokenValid = () => {
   const token = localStorage.getItem('token');
   const tokenResult = { valid: false, message: '' }
   if(!token){
+    console.log('Is token valid false')
     tokenResult.message = 'Please sign in.'
     return tokenResult
   }else{

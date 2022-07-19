@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useFormik } from 'formik';
 import {validationSchema, initialState} from '../../../utils/SignInSchema'
 import {Button, CssBaseline, TextField, Box, Typography, Container } from '@mui/material/';
@@ -16,6 +17,12 @@ export default function SignIn() {
   const [state, dispatch] = useStateValue();
   const navigate = useNavigate()
   const location = useLocation()
+
+  useEffect(() => {
+    if(state.user){
+      navigate('/')
+    }
+  }, [state.user])
 
   const handleSubmit = async (values:{username: string, password: string}) => {
     loadingAlert({
@@ -84,6 +91,7 @@ export default function SignIn() {
     validationSchema: validationSchema,
     onSubmit: handleSubmit
   });
+  console.log("USerinfo ", state.user)
 
   return (
     <ThemeProvider theme={theme}>

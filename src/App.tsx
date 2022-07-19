@@ -1,7 +1,6 @@
 import Shoes from './pages/Shoes'
 import { useEffect } from 'react';
 import { useStateValue } from "./state";
-import ShoeServices from './services/shoes'
 import { useMatch, Route, Routes, Navigate, PathMatch } from "react-router-dom";
 import SignIn from './components/forms/signin/SignIn'
 import NotFound from './pages/NotFound'
@@ -27,28 +26,26 @@ function App() {
   const shoeData = getShoeFromID(updateMatch)
   const singleShoeData = getShoeFromID(viewShoe)
 
-  /* useEffect(() => {
-    const fetchPatientList = async () => {
-      try {
-        const shoeListFromApi = await ShoeServices.getAll();
-        console.log("USE EFFFECT", shoeListFromApi);
-        dispatch({ type: "SET_SHOE_LIST", payload: shoeListFromApi });
-      } catch (e) {
-        console.error(e);
-      }
-    };
-    void fetchPatientList(); 
-  }, [dispatch]); */
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    const user = localStorage.getItem('user')
 
+    if(token && user ){
+      dispatch({ type: 'SIGN_IN', paloyad: { token, user: JSON.parse(user) }})
+    }
+  }, [])
+  
   return (
     <>
       <NavBar />
+
       { state.alert.isActive && <Alert {...state.alert} /> }
+
       <Routes>
-        <Route path="/signin" element={ isTokenValid() ? <Navigate replace to="/" /> : <SignIn /> } />
+        <Route path="/signin" element={ <SignIn /> } />
         <Route path="/" element={<ProtectedRoute />} >
-          <Route path="" element={ <Shoes /> } />
           <Route path="createShoe" element={<CreateShoeForm />} />
+          <Route path="" element={ <Shoes /> } />
           <Route path="shoe/:id" element={ 
             singleShoeData ?
             <SingleShoeCard singleShoeData={singleShoeData} /> :

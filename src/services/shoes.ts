@@ -11,12 +11,15 @@ const getConfig = (token:string) => {
 }
 
 //get all shoes and return it or the error message
-const getAll = async () => {
+const getAll = async (token:string) => {
   try{
-    const { data } = await axios.get<Shoe[]>(`${baseUrl}`);
+    console.log("IN get all")
+    const config = getConfig(token)
+    const { data } = await axios.get<Shoe[]>(`${baseUrl}`, config);
     console.log("GETALL ", data)
     return data
   }catch(e: unknown){
+    console.log(e)
     let err = 'Error getting all shoes ';
     if(e instanceof Error){
       err += e.message

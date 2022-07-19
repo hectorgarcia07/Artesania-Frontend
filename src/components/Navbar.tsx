@@ -78,7 +78,7 @@ const ResponsiveAppBar = () => {
         dispatchObj: dispatch
     })
 
-    navigate('/')
+    navigate('/signin')
   }
 
   const getNavButtons = (page:PageType) => {
@@ -91,7 +91,8 @@ const ResponsiveAppBar = () => {
     }
     return(
       isTokenValid().valid ? 
-      <Typography textAlign="center" onClick={signOut} sx={{padding: "0.5rem 1rem"}}>Sign Out</Typography>: 
+        <Typography textAlign="center" onClick={signOut} sx={{ margin: '0 auto' }}>Sign Out</Typography>
+      : 
         <Link to={page.link} style={btnStyle}>
           <Typography textAlign="center">{page.name}</Typography>
         </Link>
@@ -113,10 +114,11 @@ const ResponsiveAppBar = () => {
       )
     }
     return (
-      isTokenValid() ?
+      isTokenValid().valid ?
         <Button sx={{ my: 2, color: 'white', display: 'block' }} onClick={signOut} key={page.key}>
           <Typography textAlign="center">Sign Out</Typography>
-        </Button> :
+        </Button> 
+        :
         <Button
           onClick={handleCloseNavMenu}
           sx={{ my: 2, color: 'white', display: 'block' }}
@@ -133,48 +135,54 @@ const ResponsiveAppBar = () => {
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: 'block', md: 'none' },
-              }}
-            >
-              {pages.map((page) => (
-                <MenuItem key={page.key} onClick={handleCloseNavMenu} sx={{padding: 0}}>
-                  { getNavButtons(page) }
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-          
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
-              getPageBtn(page)
-            ))}
-          </Box>
+          { 
+            state.user 
+              &&
+              <>
+                <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                  <IconButton
+                    size="large"
+                    aria-label="account of current user"
+                    aria-controls="menu-appbar"
+                    aria-haspopup="true"
+                    onClick={handleOpenNavMenu}
+                    color="inherit"
+                  >
+                    <MenuIcon />
+                  </IconButton>
+                  <Menu
+                    id="menu-appbar"
+                    anchorEl={anchorElNav}
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'left',
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'left',
+                    }}
+                    open={Boolean(anchorElNav)}
+                    onClose={handleCloseNavMenu}
+                    sx={{
+                      display: { xs: 'block', md: 'none' },
+                    }}
+                  >
+                    {pages.map((page) => (
+                      <MenuItem key={page.key} onClick={handleCloseNavMenu} sx={{padding: 0}}>
+                        { getNavButtons(page) }
+                      </MenuItem>
+                    ))}
+                  </Menu>
+                </Box>
+                
+                <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+                  {pages.map((page) => (
+                    getPageBtn(page)
+                  ))}
+                </Box>
+              </>
+          }
         </Toolbar>
       </Container>
     </AppBar>
