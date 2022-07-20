@@ -2,31 +2,38 @@ import { Action } from '../state'
 import { Alert } from '../types'
 
 interface UpdateAlertProps {
-  alertProps: Alert, 
-  dispatchObj: React.Dispatch<Action>
-}
-
-interface NewUpdateAlertProps {
   message: string,
   dispatchObj: React.Dispatch<Action>
 }
 
-export const updateAlert = ({alertProps, dispatchObj}:UpdateAlertProps) => {
-  dispatchObj({ 
-    type: "UPDATE_ALERT", 
-    payload: alertProps
+export const successAlert = ({ message, dispatchObj}:UpdateAlertProps) => {
+  dispatchObj({
+    type: 'UPDATE_ALERT',
+    payload: {
+      isLoading: false,
+      severityType: 'success',
+      message,
+      isActive: true    
+    }
   })
   removeAlert(dispatchObj)
 }
 
-export const loadingAlert = ({alertProps, dispatchObj}:UpdateAlertProps) => {
+export const loadingAlert = ({message, dispatchObj}:UpdateAlertProps) => {
   dispatchObj({ 
     type: "UPDATE_ALERT", 
-    payload: alertProps
+    payload: {
+      isLoading: true,
+      severityType: 'info',
+      message,
+      isActive: true
+    }
   })
+  removeAlert(dispatchObj)
+
 }
 
-export const errorAlert = ({ message, dispatchObj }: NewUpdateAlertProps) => {
+export const errorAlert = ({ message, dispatchObj }: UpdateAlertProps) => {
   dispatchObj({ 
     type: "UPDATE_ALERT", 
     payload: {
@@ -36,6 +43,8 @@ export const errorAlert = ({ message, dispatchObj }: NewUpdateAlertProps) => {
       isActive: true
     }
   })
+  removeAlert(dispatchObj)
+
 }
 
 export const removeAlert = (dispatchObj:React.Dispatch<Action>) => {

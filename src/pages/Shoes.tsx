@@ -1,12 +1,12 @@
 import { Container, Stack, Typography,Grid } from '@mui/material';
 import { useStateValue } from "../state";
-import {Shoe} from '../types'
+import {Shoe, Token} from '../types'
 import ShoeList from '../components/ShoeList'
 import { useEffect } from 'react';
 import ShoeServices from '../services/shoes'
-import { isTokenValid } from '../utils/isTokenValid';
 import { useNavigate } from 'react-router-dom';
-import { errorAlert } from '../utils/AlertsUtils';
+import { errorAlert, loadingAlert, successAlert } from '../utils/AlertsUtils';
+import { GetAllResponse } from '../responseTypes';
 
 const Shoes = () => {
   const [state, dispatch] = useStateValue();
@@ -14,29 +14,31 @@ const Shoes = () => {
 
   useEffect(() => {
     console.log("Fetcing shoes")
-    const fetchShoetList = async (token:string) => {
+    const fetchShoetList = async (token:Token) => {
+      console.log('token', token)
       try {
-        const shoeListFromApi = await ShoeServices.getAll(token);
+        loadingAlert({ message: 'Getting data from servers. Please wait...', dispatchObj: dispatch })
+        const shoeListFromApi:GetAllResponse = await ShoeServices.getAll(token);
         console.log("USE EFFFECT", shoeListFromApi);
-        dispatch({ type: "SET_SHOE_LIST", payload: shoeListFromApi });
+
+        if(shoeListFromApi.statusCode === 401 || shoeListFromApi.statusCode === 500 ){
+          errorAlert({ message: "Could not get your inventory. ", dispatchObj: dispatch})
+          dispatch({ type: 'SIGN_OUT' })
+
+        }
+        if(shoeListFromApi.data)
+          dispatch({ type: "SET_SHOE_LIST", payload: shoeListFromApi.data });
       } catch (e) {
-        console.error(e);
+        dispatch({ type: 'SIGN_OUT' })
+        errorAlert({ message: "Could not get your inventory. ", dispatchObj: dispatch})
       }
     }
 
-    const result = isTokenValid()
-    if(!result.valid || !state.token){
-      errorAlert({
-        message: result.message,
-        dispatchObj: dispatch
-      })
-      navigate('/signin', { replace: true })
-    }
-    else if(Object.values(state.shoes).length === 0){
-      console.log('in if ese')
-      fetchShoetList(state.token); 
-    }
-  }, [dispatch, navigate])
+    if(state.token)
+      fetchShoetList(state.token)
+    else
+      dispatch({ type: 'SIGN_OUT' })
+  }, [])
 
   console.log("STATE", state)
   return (

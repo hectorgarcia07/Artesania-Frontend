@@ -1,9 +1,10 @@
-import axios from 'axios'
-import { Shoe, ShoePostData } from '../types'
+import axios, { AxiosError } from 'axios'
+import { Shoe, ShoePostData, Token } from '../types'
+import { GetAllResponse } from '../responseTypes'
 
 const baseUrl = '/api/shoes'
 
-const getConfig = (token:string) => {
+const getConfig = (token:Token) => {
   return {
     headers: { 
       "Authorization": `Bearer ${token}` }
@@ -11,20 +12,30 @@ const getConfig = (token:string) => {
 }
 
 //get all shoes and return it or the error message
-const getAll = async (token:string) => {
+const getAll = async (token:Token) => {
+  const resultObj:GetAllResponse = {
+    statusCode: 0,
+    message: '',
+    data: null,
+  }
+
   try{
     console.log("IN get all")
     const config = getConfig(token)
-    const { data } = await axios.get<Shoe[]>(`${baseUrl}`, config);
-    console.log("GETALL ", data)
-    return data
-  }catch(e: unknown){
-    console.log(e)
-    let err = 'Error getting all shoes ';
-    if(e instanceof Error){
-      err += e.message
+    const { data, status } = await axios.get<Shoe[]>(`${baseUrl}`, config);
+    resultObj.data = data
+    resultObj.statusCode = status
+    return resultObj
+  }catch(error: any){
+    console.log("ERROR GETTING ALL ", error)
+    if (axios.isAxiosError(error))  {
+      resultObj.statusCode = error.response?.status || 500,
+      resultObj.message = error.message
+    } else{
+      resultObj.statusCode = error.response?.status || 500,
+      resultObj.message = "Interal Server Error. Please try again."
     }
-    throw new Error(err);
+    return resultObj
   }
 }
 

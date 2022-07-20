@@ -76,6 +76,8 @@ export const reducer = (state: State, action: Action): State => {
         token: action.paloyad.token
       }
     case 'SIGN_OUT':
+      localStorage.removeItem('user')
+      localStorage.removeItem('token')
       return {
         ...state,
         user: null,

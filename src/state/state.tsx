@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer } from "react";
-import { Shoe, Alert, User, Token } from "../types";
+import { Shoe, Alert, User, Token, UserObj } from "../types";
 import { Action } from "./reducer";
 
 export type State = {
@@ -9,6 +9,10 @@ export type State = {
   user: User
 };
 
+const token = localStorage.getItem('token')
+const userFromLocalStorage = localStorage.getItem('user')
+const user = typeof userFromLocalStorage == 'string' ? (JSON.parse(userFromLocalStorage) as UserObj) : null
+
 const initialState: State = {
   shoes: {},
   alert: {
@@ -17,8 +21,8 @@ const initialState: State = {
     message: '',
     isActive: false
   },
-  token: null,
-  user: null
+  token: token,
+  user: user
 };
 
 //The context of that will be used

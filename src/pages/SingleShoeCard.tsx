@@ -9,7 +9,7 @@ import { JSXElementConstructor, Key, ReactElement, ReactFragment, ReactPortal } 
 import ShoeService from '../services/shoes' 
 import { useNavigate } from 'react-router-dom';
 import ConfirmationBtn from '../components/ConfirmationBtn'
-import { updateAlert } from '../utils/AlertsUtils'
+import { successAlert } from '../utils/AlertsUtils'
 
 const SingleShoeCard = ({singleShoeData}:{singleShoeData: Shoe}) => {
   console.log("SNGEL SHOE CARD")
@@ -22,14 +22,9 @@ const SingleShoeCard = ({singleShoeData}:{singleShoeData: Shoe}) => {
     console.log("DELETE ", response)
 
     if(response.status === 204){
-      updateAlert({
-        alertProps: {
-          isLoading: false,
-          severityType: 'success',
-          message: 'Successfully deleted a shoe.',
-          isActive: true
-          },
-          dispatchObj: dispatch
+      successAlert({
+        message: 'Successfully deleted a shoe.',
+        dispatchObj: dispatch
       })
       dispatch({ type: "DELTE_SHOE", payload: singleShoeData.id })
       navigate("/")

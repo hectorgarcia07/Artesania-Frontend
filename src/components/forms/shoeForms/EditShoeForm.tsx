@@ -6,7 +6,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from 'react-router-dom'
 import { pathToDefault } from "../../../utils/pathToDefault";
-import { updateAlert, loadingAlert } from "../../../utils/AlertsUtils";
+import { loadingAlert, errorAlert, successAlert } from "../../../utils/AlertsUtils";
 
 const EditShoeForm = ({shoeData}:{shoeData: Shoe}) => {
   const [submitState, setSubmitState] = useState({
@@ -28,12 +28,7 @@ const EditShoeForm = ({shoeData}:{shoeData: Shoe}) => {
     })
 
     loadingAlert({
-      alertProps: {
-      isLoading: true,
-      severityType: 'info',
       message: 'Submitting info. Please wait...',
-      isActive: true
-      },
       dispatchObj: dispatch
     })
     try{
@@ -63,13 +58,8 @@ const EditShoeForm = ({shoeData}:{shoeData: Shoe}) => {
       console.log("About to modify ", updatedFieldData)
       const response = await ShoeServices.updateShoeEntry(shoeData.id, updatedFieldData, token)
       if(response.status === 200){
-        updateAlert({
-          alertProps: {
-          isLoading: false,
-          severityType: 'success',
+        successAlert({
           message: 'Updated a shoe.',
-          isActive: true
-          },
           dispatchObj: dispatch
         })
 
@@ -78,13 +68,8 @@ const EditShoeForm = ({shoeData}:{shoeData: Shoe}) => {
       }
     }catch(err: unknown){
       console.log("ERROR UPDAGING")
-      updateAlert({
-        alertProps: {
-        isLoading: false,
-        severityType: 'error',
+      errorAlert({
         message: 'Error updating a shoe. Please try again.',
-        isActive: true
-        },
         dispatchObj: dispatch
       })
 

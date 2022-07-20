@@ -62,7 +62,7 @@ export interface Alert{
 
 export type User = UserObj | null
 
-interface UserObj{
+export interface UserObj{
   username: string,
   role: Role,
   id: string

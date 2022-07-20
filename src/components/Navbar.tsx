@@ -10,9 +10,8 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import { Link, useNavigate } from 'react-router-dom'
-import { isTokenValid } from '../utils/isTokenValid'
 import { useStateValue } from '../state'
-import { updateAlert } from '../utils/AlertsUtils'
+import { successAlert } from '../utils/AlertsUtils'
 
 interface PageType {
   key: number;
@@ -64,17 +63,9 @@ const ResponsiveAppBar = () => {
   };
 
   const signOut = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
     dispatch({ type: 'SIGN_OUT' })
-    updateAlert(
-      {
-        alertProps: {
-        isLoading: false,
-        severityType: 'success',
+    successAlert({
         message: 'Successfully signed out',
-        isActive: true
-        },
         dispatchObj: dispatch
     })
 
@@ -90,12 +81,7 @@ const ResponsiveAppBar = () => {
       )
     }
     return(
-      isTokenValid().valid ? 
-        <Typography textAlign="center" onClick={signOut} sx={{ margin: '0 auto' }}>Sign Out</Typography>
-      : 
-        <Link to={page.link} style={btnStyle}>
-          <Typography textAlign="center">{page.name}</Typography>
-        </Link>
+      <Typography textAlign="center" onClick={signOut} sx={{ margin: '0 auto' }}>Sign Out</Typography>
     )
   }
 
@@ -114,20 +100,9 @@ const ResponsiveAppBar = () => {
       )
     }
     return (
-      isTokenValid().valid ?
-        <Button sx={{ my: 2, color: 'white', display: 'block' }} onClick={signOut} key={page.key}>
-          <Typography textAlign="center">Sign Out</Typography>
-        </Button> 
-        :
-        <Button
-          onClick={handleCloseNavMenu}
-          sx={{ my: 2, color: 'white', display: 'block' }}
-          key={page.key}
-        >
-          <Link to={page.link} style={navStyle}>
-            <Typography textAlign="center">{page.name}</Typography>
-          </Link>
-        </Button>
+      <Button sx={{ my: 2, color: 'white', display: 'block' }} onClick={signOut} key={page.key}>
+        <Typography textAlign="center">Sign Out</Typography>
+      </Button> 
     )
   }
 

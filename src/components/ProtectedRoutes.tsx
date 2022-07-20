@@ -1,28 +1,32 @@
 import { useEffect } from 'react'
-import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { Outlet, useLocation, Navigate } from 'react-router-dom'
 import { isTokenValid } from "../utils/isTokenValid"
-import { updateAlert, errorAlert } from '../utils/AlertsUtils'
+import { errorAlert } from '../utils/AlertsUtils'
 import { useStateValue } from '../state' 
 
 const ProtectedRoute = () => {
   console.log("Checking validity")
   const [state, dispatch] = useStateValue();
-  const navigate = useNavigate()
   const location = useLocation()
-  
+
+  console.log('In Protected Route effect')
+  const result = isTokenValid()
+
   useEffect(() => {
-    console.log('In user effect')
-    const result = isTokenValid()
-      if(!result.valid){
-        errorAlert({
-          message: result.message,
-          dispatchObj: dispatch
-        })
-        console.log("Redireting to sign in");
-        
-        navigate('/signin', { replace: true, state: {from: location }})
-      }
-  }, [navigate, state.user])
+    if(!result.valid){
+      console.log("error message")
+      dispatch({type: 'SIGN_OUT'})
+      errorAlert({
+        message: result.message,
+        dispatchObj: dispatch
+      })
+    }
+  }, [])
+
+  if(!result.valid){
+    console.log("Redireting to sign in");
+    return <Navigate to="/signin" replace state={{ from: location }} />
+  }
 
   console.log("Valid token");  
   return <Outlet />

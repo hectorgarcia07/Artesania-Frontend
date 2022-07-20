@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import ShoeForm from "./ShoeForm";
 import { useState } from "react";
 import { pathToDefault } from "../../../utils/pathToDefault";
-import { updateAlert, loadingAlert } from "../../../utils/AlertsUtils";
+import { successAlert, loadingAlert, errorAlert } from "../../../utils/AlertsUtils";
 
 const CreateShoeForm = () => {
   const [submitState, setSubmitState] = useState({
@@ -26,13 +26,8 @@ const CreateShoeForm = () => {
     })
 
     loadingAlert({
-      alertProps: {
-      isLoading: true,
-      severityType: 'info',
       message: 'Submitting info. Please wait...',
-      isActive: true
-      },
-    dispatchObj: dispatch
+      dispatchObj: dispatch
     })
 
     //if image was uploaded, then check to see if you can save it and save the url
@@ -50,13 +45,8 @@ const CreateShoeForm = () => {
       const response = await ShoeServices.createShoeEntry(shoePostData, token)
       console.log("RESPONSE", response)
       if(response && response.status === 201){
-        updateAlert({
-          alertProps: {
-          isLoading: false,
-          severityType: 'success',
+        successAlert({
           message: 'Added a new Shoe.',
-          isActive: true
-          },
           dispatchObj: dispatch
         })
 
@@ -65,13 +55,8 @@ const CreateShoeForm = () => {
       }
     }
     catch(e){
-      updateAlert({
-        alertProps: {
-        isLoading: false,
-        severityType: 'error',
+      errorAlert({
         message: 'Error creating a new shoe. Please try again.',
-        isActive: true
-        },
         dispatchObj: dispatch
       })
     }

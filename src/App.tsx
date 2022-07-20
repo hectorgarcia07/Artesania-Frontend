@@ -10,7 +10,6 @@ import SingleShoeCard from './pages/SingleShoeCard'
 import EditShoeForm from './components/forms/shoeForms/EditShoeForm'
 import NavBar from './components/Navbar'
 import Alert from './components/Alerts/alert'
-import { isTokenValid } from '../src/utils/isTokenValid'
 
 function App() {
   const getShoeFromID = (id:PathMatch<"id"> | null) => {
@@ -27,12 +26,7 @@ function App() {
   const singleShoeData = getShoeFromID(viewShoe)
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    const user = localStorage.getItem('user')
-
-    if(token && user ){
-      dispatch({ type: 'SIGN_IN', paloyad: { token, user: JSON.parse(user) }})
-    }
+    console.log('app loaded')
   }, [])
   
   return (
@@ -42,10 +36,9 @@ function App() {
       { state.alert.isActive && <Alert {...state.alert} /> }
 
       <Routes>
-        <Route path="/signin" element={ <SignIn /> } />
-        <Route path="/" element={<ProtectedRoute />} >
+        <Route element={<ProtectedRoute />} >
+          <Route path="/" element={ <Shoes /> } />
           <Route path="createShoe" element={<CreateShoeForm />} />
-          <Route path="" element={ <Shoes /> } />
           <Route path="shoe/:id" element={ 
             singleShoeData ?
             <SingleShoeCard singleShoeData={singleShoeData} /> :
@@ -55,9 +48,9 @@ function App() {
             shoeData ?
             <EditShoeForm shoeData={shoeData} /> :
             null
-          }
-        />
+          }/>
         </Route>
+        <Route path="/signin" element={ <SignIn /> } />
         <Route path="/not-found" element={<NotFound /> } />
         <Route path="*" element={<p>{"There's nothing here: 404!"}</p>} />
       </Routes>
