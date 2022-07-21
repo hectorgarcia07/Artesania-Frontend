@@ -11,7 +11,6 @@ const ProtectedRoute = () => {
 
   console.log('In Protected Route effect')
   const result = isTokenValid()
-
   useEffect(() => {
     if(!result.valid){
       console.log("error message")

@@ -24,10 +24,6 @@ function App() {
   const viewShoe = useMatch('/shoe/:id')
   const shoeData = getShoeFromID(updateMatch)
   const singleShoeData = getShoeFromID(viewShoe)
-
-  useEffect(() => {
-    console.log('app loaded')
-  }, [])
   
   return (
     <>
@@ -36,6 +32,7 @@ function App() {
       { state.alert.isActive && <Alert {...state.alert} /> }
 
       <Routes>
+        <Route path="/signin" element={ <SignIn /> } />
         <Route element={<ProtectedRoute />} >
           <Route path="/" element={ <Shoes /> } />
           <Route path="createShoe" element={<CreateShoeForm />} />
@@ -50,7 +47,6 @@ function App() {
             null
           }/>
         </Route>
-        <Route path="/signin" element={ <SignIn /> } />
         <Route path="/not-found" element={<NotFound /> } />
         <Route path="*" element={<p>{"There's nothing here: 404!"}</p>} />
       </Routes>

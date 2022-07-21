@@ -25,12 +25,14 @@ const getAll = async (token:Token) => {
     const { data, status } = await axios.get<Shoe[]>(`${baseUrl}`, config);
     resultObj.data = data
     resultObj.statusCode = status
+    resultObj.message = 'Successfully got your inventory'
+
     return resultObj
   }catch(error: any){
     console.log("ERROR GETTING ALL ", error)
-    if (axios.isAxiosError(error))  {
-      resultObj.statusCode = error.response?.status || 500,
-      resultObj.message = error.message
+    if (axios.isAxiosError(error)){
+      resultObj.statusCode = error.response?.status || 401,
+      resultObj.message = 'Expired session. Please login again'
     } else{
       resultObj.statusCode = error.response?.status || 500,
       resultObj.message = "Interal Server Error. Please try again."

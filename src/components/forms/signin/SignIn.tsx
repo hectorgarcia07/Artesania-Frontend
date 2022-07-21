@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useFormik } from 'formik';
 import {validationSchema, initialState} from '../../../utils/SignInSchema'
 import {Button, CssBaseline, TextField, Box, Typography, Container } from '@mui/material/';
@@ -13,7 +12,6 @@ const theme = createTheme();
 
 export default function SignIn() {
   console.log("IN SING IN PAGE ")
-
   const [state, dispatch] = useStateValue();
   const navigate = useNavigate()
   const location = useLocation()

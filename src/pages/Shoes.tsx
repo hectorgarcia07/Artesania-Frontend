@@ -1,33 +1,32 @@
-import { Container, Stack, Typography,Grid } from '@mui/material';
+import { Container, Typography,Grid } from '@mui/material';
 import { useStateValue } from "../state";
 import {Shoe, Token} from '../types'
 import ShoeList from '../components/ShoeList'
 import { useEffect } from 'react';
 import ShoeServices from '../services/shoes'
-import { useNavigate } from 'react-router-dom';
 import { errorAlert, loadingAlert, successAlert } from '../utils/AlertsUtils';
 import { GetAllResponse } from '../responseTypes';
 
 const Shoes = () => {
   const [state, dispatch] = useStateValue();
-  const navigate = useNavigate()
 
   useEffect(() => {
     console.log("Fetcing shoes")
     const fetchShoetList = async (token:Token) => {
       console.log('token', token)
       try {
-        loadingAlert({ message: 'Getting data from servers. Please wait...', dispatchObj: dispatch })
+        loadingAlert({ message: 'Getting inventory from servers. Please wait...', dispatchObj: dispatch })
         const shoeListFromApi:GetAllResponse = await ShoeServices.getAll(token);
         console.log("USE EFFFECT", shoeListFromApi);
 
         if(shoeListFromApi.statusCode === 401 || shoeListFromApi.statusCode === 500 ){
-          errorAlert({ message: "Could not get your inventory. ", dispatchObj: dispatch})
+          errorAlert({ message: shoeListFromApi.message, dispatchObj: dispatch})
           dispatch({ type: 'SIGN_OUT' })
-
         }
-        if(shoeListFromApi.data)
+        if(shoeListFromApi.data){
+          successAlert({ message: shoeListFromApi.message, dispatchObj: dispatch })
           dispatch({ type: "SET_SHOE_LIST", payload: shoeListFromApi.data });
+        }
       } catch (e) {
         dispatch({ type: 'SIGN_OUT' })
         errorAlert({ message: "Could not get your inventory. ", dispatchObj: dispatch})
