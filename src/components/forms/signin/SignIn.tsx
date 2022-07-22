@@ -11,7 +11,6 @@ import { SignInResponse } from '../../../utils/signInTypeCheck';
 const theme = createTheme();
 
 export default function SignIn() {
-  console.log("IN SING IN PAGE ")
   const [state, dispatch] = useStateValue();
   const navigate = useNavigate()
   const location = useLocation()
@@ -64,7 +63,6 @@ export default function SignIn() {
     validationSchema: validationSchema,
     onSubmit: handleSubmit
   });
-  console.log("USerinfo ", state.user)
 
   return (
       user ?

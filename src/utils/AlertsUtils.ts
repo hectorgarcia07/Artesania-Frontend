@@ -1,5 +1,4 @@
 import { Action } from '../state'
-import { Alert } from '../types'
 
 interface UpdateAlertProps {
   message: string,

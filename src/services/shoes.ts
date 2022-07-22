@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios'
 import { Shoe, ShoePostData, Token } from '../types'
 import { GetAllResponse } from '../responseTypes'
+import { pathToDefault } from '../utils/pathToDefault'
 
 const baseUrl = '/api/shoes'
 
@@ -11,14 +12,14 @@ const getConfig = (token:Token) => {
   }
 }
 
+const resultObj:GetAllResponse = {
+  statusCode: 0,
+  message: '',
+  data: null,
+}
+
 //get all shoes and return it or the error message
 const getAll = async (token:Token) => {
-  const resultObj:GetAllResponse = {
-    statusCode: 0,
-    message: '',
-    data: null,
-  }
-
   try{
     console.log("IN get all")
     const config = getConfig(token)
@@ -76,11 +77,13 @@ const uploadImage = async (img:File, token:string) => {
   try{
     const config = getConfig(token)
     const formData = new FormData()
-    formData.append("shoe_image", img)
     console.log("FILE TO SEND: ", img, "CONFIG ", formData)
     const response = await axios.post(`${baseUrl}/img`, formData, config)
+    
+    resultObj.data = response.data.link ? response.data.link : pathToDefault
+
     console.log("SUCCESS ", response.data)
-    return response.data.link
+    return resultObj
   }catch(e: unknown){
     console.log("failed to upload")
     if(e instanceof Error){
@@ -88,7 +91,6 @@ const uploadImage = async (img:File, token:string) => {
     }
     return null
   }
-
 }
 
 const updateShoeEntry = async (id:string, newObject:ShoePostData, token:string) => {
@@ -98,9 +100,18 @@ const updateShoeEntry = async (id:string, newObject:ShoePostData, token:string) 
 }
 
 const deleteShoeEntry = async (id:string, token:string) => {
-  const config = getConfig(token)
-  const response = await axios.delete(`${baseUrl}/${id}`, config)
-  return response
+  try{
+    const config = getConfig(token)
+    const response = await axios.delete(`${baseUrl}/${id}`, config)
+    resultObj.statusCode = response.status
+    resultObj.message = 'Item deleted'
+    return resultObj
+  }catch(e: unknown){
+    console.log("Error, please sign in again", e)
+    resultObj.statusCode = 500
+    resultObj.message = 'Internal server error'
+    return resultObj
+  }
 }
 
 export default { 

@@ -5,3 +5,9 @@ export interface GetAllResponse {
   message: string,
   data: Shoe[] | null,
 }
+
+export interface GetAllResponse {
+  statusCode: number,
+  message: string,
+  data: Shoe[] | null,
+}

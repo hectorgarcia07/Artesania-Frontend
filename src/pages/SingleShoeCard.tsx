@@ -9,7 +9,7 @@ import { JSXElementConstructor, Key, ReactElement, ReactFragment, ReactPortal } 
 import ShoeService from '../services/shoes' 
 import { useNavigate } from 'react-router-dom';
 import ConfirmationBtn from '../components/ConfirmationBtn'
-import { successAlert } from '../utils/AlertsUtils'
+import { successAlert, errorAlert } from '../utils/AlertsUtils'
 
 const SingleShoeCard = ({singleShoeData}:{singleShoeData: Shoe}) => {
   console.log("SNGEL SHOE CARD")
@@ -17,17 +17,34 @@ const SingleShoeCard = ({singleShoeData}:{singleShoeData: Shoe}) => {
   const navigate = useNavigate()
   
   const deleteShoe = async() => {
-    const token = JSON.parse(localStorage.getItem("token")!)
-    const response = await ShoeService.deleteShoeEntry(singleShoeData.id, token)
-    console.log("DELETE ", response)
-
-    if(response.status === 204){
-      successAlert({
-        message: 'Successfully deleted a shoe.',
+    const token = state.token
+    if(!token){
+      errorAlert({
+        message: 'Session expired, please log in',
         dispatchObj: dispatch
       })
-      dispatch({ type: "DELTE_SHOE", payload: singleShoeData.id })
-      navigate("/")
+      navigate('/signin', {replace: true, state: { from: location }} )
+    }
+    else{
+      const resultObj = await ShoeService.deleteShoeEntry(singleShoeData.id, token)
+      console.log("DELETE ", resultObj)
+
+      if(resultObj.statusCode === 204){
+        successAlert({
+          message: resultObj.message,
+          dispatchObj: dispatch
+        })
+        dispatch({ type: "DELTE_SHOE", payload: singleShoeData.id })
+        navigate("/")
+      }
+      else{
+        errorAlert({
+          message: resultObj.message,
+          dispatchObj: dispatch
+        })
+        dispatch({ type: 'SIGN_OUT' })
+        navigate('/signin', {replace: true, state: { from: location }} )
+      }
     }
   }
   const shoeCardContentStyle = { 

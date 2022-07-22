@@ -15,10 +15,15 @@ const CreateShoeForm = () => {
   const [state, dispatch] = useStateValue()
   const navigate = useNavigate()
 
-  const onSubmit = async(fields:ShoeData) => {
+  const onSubmit = async (fields:ShoeData) => {
     console.log("ON SUBMIT ", fields)
-    const token = JSON.parse(localStorage.getItem("token")!)
-    let url = ''
+    const token = state.token
+    let url = pathToDefault
+
+    if(!token){
+      errorAlert({ message: 'Expired session, please sign in ', dispatchObj: dispatch })
+      return navigate('/signin', { replace: true, state: { from: location } } )
+    }
 
     setSubmitState({
       error: false,
@@ -32,12 +37,10 @@ const CreateShoeForm = () => {
 
     //if image was uploaded, then check to see if you can save it and save the url
     if(fields.shoe_image instanceof File){
-      const img_response = await ShoeServices.uploadImage(fields.shoe_image, token)
-      url = img_response ? img_response : pathToDefault
+      const responeObj = await ShoeServices.uploadImage(fields.shoe_image, token)
+      url = responeObj.data
     }
-    else{
-      url = pathToDefault
-    }
+    
     const { shoe_image, ...other } = fields
     //create new object to post excluding shoe_image and adding url
     const shoePostData = { ...other, url}

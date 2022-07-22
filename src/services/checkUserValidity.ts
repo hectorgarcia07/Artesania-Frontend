@@ -8,14 +8,12 @@ export const checkUserValidity = ():User => {
     }
     
     const userParsed = JSON.parse(userFromLocalStorage)
-    
     const username = isUsername(userParsed.username)
     const role = isRole(userParsed.role)
     const id = isID(userParsed.id)
 
     if(!username || !role || !id )
       return null
-    
     return userParsed as UserObj
   }catch(e){
     return null

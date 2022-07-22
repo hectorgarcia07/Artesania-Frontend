@@ -1,15 +1,12 @@
-import Shoes from './pages/Shoes'
 import { useEffect } from 'react';
+import { useMatch, Route, Routes, PathMatch } from "react-router-dom";
 import { useStateValue } from "./state";
-import { useMatch, Route, Routes, Navigate, PathMatch } from "react-router-dom";
-import SignIn from './components/forms/signin/SignIn'
-import NotFound from './pages/NotFound'
-import ProtectedRoute from './components/ProtectedRoutes'
-import CreateShoeForm from './components/forms/shoeForms/CreateShoeForm'
-import SingleShoeCard from './pages/SingleShoeCard'
-import EditShoeForm from './components/forms/shoeForms/EditShoeForm'
-import NavBar from './components/Navbar'
-import Alert from './components/Alerts/alert'
+import { Token } from './types';
+import { SignIn, CreateShoeForm, EditShoeForm } from './components/forms'
+import { ProtectedRoute, Navbar, Alert } from './components'
+import { Shoes, NotFound, SingleShoeCard } from './pages'
+import { loadingAlert, errorAlert, successAlert } from './utils/AlertsUtils'
+import ShoeServices from './services/shoes'
 
 function App() {
   const getShoeFromID = (id:PathMatch<"id"> | null) => {
@@ -24,13 +21,40 @@ function App() {
   const viewShoe = useMatch('/shoe/:id')
   const shoeData = getShoeFromID(updateMatch)
   const singleShoeData = getShoeFromID(viewShoe)
+
+  useEffect(() => {
+    console.log("Fetcing shoes")
+    const fetchShoetList = async (token:Token) => {
+      console.log('token', token)
+      try {
+        loadingAlert({ message: 'Getting inventory from servers. Please wait...', dispatchObj: dispatch })
+        const shoeListFromApi = await ShoeServices.getAll(token);
+        console.log("USE EFFFECT", shoeListFromApi);
+
+        if(shoeListFromApi.statusCode === 401 || shoeListFromApi.statusCode === 500 ){
+          errorAlert({ message: shoeListFromApi.message, dispatchObj: dispatch})
+          dispatch({ type: 'SIGN_OUT' })
+        }
+        if(shoeListFromApi.data){
+          successAlert({ message: shoeListFromApi.message, dispatchObj: dispatch })
+          dispatch({ type: "SET_SHOE_LIST", payload: shoeListFromApi.data });
+        }
+      } catch (e) {
+        dispatch({ type: 'SIGN_OUT' })
+        errorAlert({ message: "Could not get your inventory. ", dispatchObj: dispatch})
+      }
+    }
+
+    if(state.token)
+      fetchShoetList(state.token)
+    else
+      dispatch({ type: 'SIGN_OUT' })
+  }, [state.token])
   
   return (
     <>
-      <NavBar />
-
+      <Navbar />
       { state.alert.isActive && <Alert {...state.alert} /> }
-
       <Routes>
         <Route path="/signin" element={ <SignIn /> } />
         <Route element={<ProtectedRoute />} >
