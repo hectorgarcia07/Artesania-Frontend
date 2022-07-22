@@ -1,6 +1,8 @@
 import axios, { AxiosError } from 'axios'
 import { Shoe, ShoePostData, Token } from '../types'
-import { GetAllResponse } from '../responseTypes'
+import { GetAllResponse, ImgUploadResponse, 
+  DeleteResponse, CreateShoeResponse , UpdateShoeResponse
+} from '../responseTypes'
 import { pathToDefault } from '../utils/pathToDefault'
 
 const baseUrl = '/api/shoes'
@@ -12,14 +14,13 @@ const getConfig = (token:Token) => {
   }
 }
 
-const resultObj:GetAllResponse = {
-  statusCode: 0,
-  message: '',
-  data: null,
-}
-
 //get all shoes and return it or the error message
 const getAll = async (token:Token) => {
+  const resultObj:GetAllResponse = {
+    statusCode: 0,
+    message: '',
+    data: null,
+  }
   try{
     console.log("IN get all")
     const config = getConfig(token)
@@ -60,57 +61,75 @@ const getSingleShoe = async (id:string, token:string) => {
 }
 
 const createShoeEntry = async (shoeObj:ShoePostData, token:string) => {
+  const resultObj:CreateShoeResponse = { data: null, statusCode: 500, message: 'Error creating a new shoe. Please try again.' }
   try{
     const config = getConfig(token)
     const response = await axios.post(baseUrl, shoeObj, config)
     console.log("RESPONSE", response)
-    return response
+    resultObj.data = response.data
+    resultObj.message = 'Added a new Shoe'
+    resultObj.statusCode = response.status
+
+    console.log('result, ', response)
+
+    return resultObj
   }catch(e: unknown){
-    if(e instanceof Error){
-      console.log('ERROR POSTING', e.message)
-      throw e
-    }
+    console.log('Error ', e)
+    return resultObj
   }
 }
 
 const uploadImage = async (img:File, token:string) => {
+  const imgUploadResponse:ImgUploadResponse = { url: pathToDefault }
   try{
     const config = getConfig(token)
     const formData = new FormData()
     console.log("FILE TO SEND: ", img, "CONFIG ", formData)
     const response = await axios.post(`${baseUrl}/img`, formData, config)
     
-    resultObj.data = response.data.link ? response.data.link : pathToDefault
+    if(response.data.link){
+      imgUploadResponse.url = response.data.link
+    }
 
     console.log("SUCCESS ", response.data)
-    return resultObj
+    return imgUploadResponse
   }catch(e: unknown){
-    console.log("failed to upload")
-    if(e instanceof Error){
-      console.log("ERROR FAILED UPLOAD ", e.message)
-    }
-    return null
+    console.log("failed to upload ", e)
+    return imgUploadResponse
   }
 }
 
 const updateShoeEntry = async (id:string, newObject:ShoePostData, token:string) => {
-  const config = getConfig(token)
-  const response = await axios.put(`${baseUrl}/${id}`, newObject, config)
-  return response
+  const updateResponse:UpdateShoeResponse = { data: null, message: 'Error updating a shoe. Please try again.', statusCode: 500 }
+  try{
+    const config = getConfig(token)
+    const response = await axios.put(`${baseUrl}/${id}`, newObject, config)
+    updateResponse.data = response.data
+    updateResponse.message = 'Updated successfully'
+    updateResponse.statusCode = response.status
+
+    return updateResponse
+  }catch(e: unknown){
+    console.log('Updated error: ', e)
+    return updateResponse
+  }
 }
 
 const deleteShoeEntry = async (id:string, token:string) => {
+  const deleteResultObj:DeleteResponse = { statusCode: 0, message: '' }
   try{
     const config = getConfig(token)
     const response = await axios.delete(`${baseUrl}/${id}`, config)
-    resultObj.statusCode = response.status
-    resultObj.message = 'Item deleted'
-    return resultObj
+    deleteResultObj.statusCode = response.status
+    deleteResultObj.message = 'Item deleted'
+
+    return deleteResultObj
   }catch(e: unknown){
     console.log("Error, please sign in again", e)
-    resultObj.statusCode = 500
-    resultObj.message = 'Internal server error'
-    return resultObj
+
+    deleteResultObj.statusCode = 500
+    deleteResultObj.message = 'Internal server error'
+    return deleteResultObj
   }
 }
 

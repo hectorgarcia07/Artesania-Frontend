@@ -13,7 +13,7 @@ const EditShoeForm = ({shoeData}:{shoeData: Shoe}) => {
     error: false,
     submitStatus: false
   })
-  const [, dispatch] = useStateValue()
+  const [state, dispatch] = useStateValue()
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -31,54 +31,50 @@ const EditShoeForm = ({shoeData}:{shoeData: Shoe}) => {
       message: 'Submitting info. Please wait...',
       dispatchObj: dispatch
     })
-    try{
-      const token = JSON.parse(localStorage.getItem("token")!)
-      let url = ''
 
-      //update new image of shoe
-      if(fields.shoe_image instanceof File){
-        console.log("About to upload image")
-        const img_response = await ShoeServices.uploadImage(fields.shoe_image, token)
+    const token = state.token
+    let url = oldUrl.length ? oldUrl : pathToDefault
 
-        if(!img_response && oldUrl){
-          url = oldUrl
-        }
-        else if(!img_response && !oldUrl){
-          url = pathToDefault
-        }
-        else{
-          url = img_response
-        }
-      }
-      else{
-        url = oldUrl
-      }
-      const {shoe_image, ...fieldsData } = fields
-      const updatedFieldData = {...fieldsData, url}
-      console.log("About to modify ", updatedFieldData)
-      const response = await ShoeServices.updateShoeEntry(shoeData.id, updatedFieldData, token)
-      if(response.status === 200){
-        successAlert({
-          message: 'Updated a shoe.',
-          dispatchObj: dispatch
-        })
+    if(!token){
+      errorAlert({ message: 'Expired session, please sign in ', dispatchObj: dispatch })
+      dispatch({ type: 'SIGN_OUT' })
+      return navigate('/signin', { replace: true, state: { from: location } } )
+    }
 
-        dispatch({ type: "UPDATE_SHOE", payload: response.data })
-        navigate('/')
+    //update new image of shoe
+    if(fields.shoe_image instanceof File){
+      console.log("About to upload image")
+      const img_response = await ShoeServices.uploadImage(fields.shoe_image, token)
+
+      if(img_response.url ){
+        url = img_response.url
       }
-    }catch(err: unknown){
-      console.log("ERROR UPDAGING")
-      errorAlert({
-        message: 'Error updating a shoe. Please try again.',
+    }
+  
+    const { shoe_image, ...fieldsData } = fields
+    const updatedFieldData = {...fieldsData, url}
+    console.log("About to modify ", updatedFieldData)
+    const response = await ShoeServices.updateShoeEntry(shoeData.id, updatedFieldData, token)
+
+    if(response.data && response.statusCode === 200){
+      successAlert({
+        message: response.message,
         dispatchObj: dispatch
       })
 
-      if (axios.isAxiosError(err)) {
-        setSubmitState({ error: true, submitStatus: false})
-        console.log("AXIOS ", err.message, err.response?.status)
-        localStorage.removeItem('token')
-        navigate('/signin', {replace: true, state: {from: location, data: shoeData}} )
-      }
+      dispatch({ type: "UPDATE_SHOE", payload: response.data })
+      navigate('/')
+    }
+    else{
+      console.log("ERROR UPDAGING")
+      errorAlert({
+        message: response.message,
+        dispatchObj: dispatch
+      })
+
+      setSubmitState({ error: true, submitStatus: false })
+      dispatch({ type: 'SIGN_OUT' })
+      navigate('/signin', {replace: true, state: {from: location, data: shoeData}} )
     }
   }
 

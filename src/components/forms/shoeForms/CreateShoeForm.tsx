@@ -22,6 +22,7 @@ const CreateShoeForm = () => {
 
     if(!token){
       errorAlert({ message: 'Expired session, please sign in ', dispatchObj: dispatch })
+      dispatch({ type: 'SIGN_OUT' })
       return navigate('/signin', { replace: true, state: { from: location } } )
     }
 
@@ -38,31 +39,31 @@ const CreateShoeForm = () => {
     //if image was uploaded, then check to see if you can save it and save the url
     if(fields.shoe_image instanceof File){
       const responeObj = await ShoeServices.uploadImage(fields.shoe_image, token)
-      url = responeObj.data
+      url = responeObj.url
     }
     
     const { shoe_image, ...other } = fields
     //create new object to post excluding shoe_image and adding url
     const shoePostData = { ...other, url}
-    try{
-      const response = await ShoeServices.createShoeEntry(shoePostData, token)
-      console.log("RESPONSE", response)
-      if(response && response.status === 201){
-        successAlert({
-          message: 'Added a new Shoe.',
-          dispatchObj: dispatch
-        })
 
-        dispatch({ type: "ADD_SHOE", payload: response.data })
-        navigate('/')
-      }
+    const response = await ShoeServices.createShoeEntry(shoePostData, token)
+    console.log("RESPONSE", response)
+    if(response && response.data && response.statusCode === 201){
+      successAlert({
+        message: 'Added a new Shoe.',
+        dispatchObj: dispatch
+      })
+
+      dispatch({ type: "ADD_SHOE", payload: response.data })
+      navigate('/')
     }
-    catch(e){
+    else{
       errorAlert({
         message: 'Error creating a new shoe. Please try again.',
         dispatchObj: dispatch
       })
     }
+   
     setSubmitState({
       error: true,
       submitStatus: false

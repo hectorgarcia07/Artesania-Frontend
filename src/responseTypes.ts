@@ -6,8 +6,19 @@ export interface GetAllResponse {
   data: Shoe[] | null,
 }
 
-export interface GetAllResponse {
+export interface ImgUploadResponse {
+  url: string
+}
+
+export interface DeleteResponse{
   statusCode: number,
   message: string,
-  data: Shoe[] | null,
 }
+
+export interface CreateShoeResponse {
+  data: Shoe | null,
+  message: string,
+  statusCode: number
+}
+
+export type UpdateShoeResponse = CreateShoeResponse
