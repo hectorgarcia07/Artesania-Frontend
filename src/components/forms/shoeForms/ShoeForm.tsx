@@ -3,9 +3,10 @@ import { Formik, Form, FieldArray, FormikTouched } from 'formik';
 import { ShoeData, Gender, OnlySizesData, Age, Size } from '../../../types'
 import { SetStateAction } from 'react';
 import { TextField, InputLabel, FormControl, Input,
-  Select, MenuItem, Button, Box, Typography, Container } from '@mui/material';
+  Select, MenuItem, Button, Box, Typography, Container, Grid } from '@mui/material';
 import { validationSchema } from '../../../utils/ShoeFormSchema'
 import TransitionsModal from '../../ConfirmationBtn'
+import CustomInput from './CustomInput'
 
 interface SheFormProp {
   submitState: {error: boolean, submitStatus: boolean},
@@ -93,8 +94,41 @@ const ShoeForm = ({ submitState, onSubmit, data }: SheFormProp) => {
 
   return (
     <>
-      {Boolean(submitState.error) ? (<div>SERVER IS DOWN!</div>) : null}
-      <Formik initialValues={initialValue} validateOnChange={false} validationSchema={validationSchema} onSubmit={onSubmit}>
+      <Formik
+        initialValues={initialValue}
+        validationSchema={validationSchema}
+        onSubmit={onSubmit}
+      >
+        { props => (
+          <Box component='form' onSubmit={props.handleSubmit}>
+            <Grid container 
+              sx={{ 
+                p: '1.4rem', 
+                width: '100%',
+                paddingTop: '5.2rem',
+              }}
+              columnSpacing={{ xs: 1 }}
+            >
+              <Grid item xs={12}>
+                <CustomInput
+                  label="Cardholder name"
+                  name="name"
+                />
+              </Grid>
+              
+            </Grid>
+          </Box>
+        )}
+      </Formik>
+    </>
+  )
+}
+
+export default ShoeForm
+
+/*
+{Boolean(submitState.error) ? (<div>SERVER IS DOWN!</div>) : null}
+      <Formik initialValues={initialValue}  validationSchema={validationSchema} onSubmit={onSubmit}>
         {({ errors, values, touched, setValues, handleChange, setFieldValue }) => (
           <Container maxWidth="sm" sx={{pt: '1.5rem'}}>
             <Form >
@@ -119,7 +153,7 @@ const ShoeForm = ({ submitState, onSubmit, data }: SheFormProp) => {
               <TextField
                 sx={style}
                 fullWidth
-                id="email"
+                id="name"
                 name="name"
                 label="Name"
                 value={values.name}
@@ -237,8 +271,4 @@ const ShoeForm = ({ submitState, onSubmit, data }: SheFormProp) => {
           </Container>
         )}
       </Formik>
-    </>
-  )
-}
-
-export default ShoeForm
+*/
