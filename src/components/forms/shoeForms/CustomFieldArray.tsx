@@ -1,37 +1,48 @@
-import { Button, Input } from "@mui/material"
-import { Field, FieldArray } from "formik"
+import { Button  } from "@mui/material"
+import { FieldArray } from "formik"
+import { ShoeData } from "../../../types"
+import CustomInput from './CustomInput'
+import ConfirmDeleteModal from '../../ConfirmDeleteModal'
 
-const CustomFieldArray = () => {
+interface CustomFieldArrayProps {
+  values: ShoeData;
+  name: string;
+}
 
+const CustomFieldArray = (props:CustomFieldArrayProps) => {
   return (
-    <FieldArray name="people">
+    <FieldArray name={props.name}>
       {({ push, remove }) => (
         <div>
-          {values.people.map((p, index) => {
+          {props.values.sizes.map((size, index) => {
             return (
-              <div key={p.id}>
-                <Field
-                  name={`people[${index}].firstName`}
-                  component={Input}
+              <div key={index}>
+                <CustomInput
+                  label="Size"
+                  name={`sizes[${index}].size`}
+                  type="number"
                 />
-                <Field
-                  name={`people[${index}].lastName`}
-                  component={Input}
+                <CustomInput
+                  label="Quantity"
+                  name={`sizes[${index}].quantity`}
+                  type="number"
                 />
-                <div onClick={() => remove(index)}>x</div>
+                <ConfirmDeleteModal onClickMethod={ () => remove(index) } description="Delete Size" />
               </div>
             )
           })}
-      <Button
-        type="button"
-        onClick={() =>
-          push({ id: generate(), firstName: "", lastName: "" })
-        }
-      >
-        add to list
-      </Button>
-    </div>
-  )}
-  </FieldArray>
-)
+          <Button
+            type="button"
+            onClick={() =>
+              push({ size: "", quantity: "" })
+            }
+          >
+            add to list
+          </Button>
+        </div>
+      )}
+    </FieldArray>
+  )
 }
+
+export default CustomFieldArray

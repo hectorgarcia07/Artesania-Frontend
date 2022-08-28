@@ -1,21 +1,34 @@
-import { ShoeData } from "../../../types"
+import { Age, Gender, ShoeData } from "../../../types"
 import ShoeServices from '../../../services/shoes'
 import { useStateValue } from "../../../state";
 import { useNavigate } from "react-router-dom";
 import ShoeForm from "./ShoeForm";
-import { useState } from "react";
 import { pathToDefault } from "../../../utils/pathToDefault";
 import { successAlert, loadingAlert, errorAlert } from "../../../utils/AlertsUtils";
 
 const CreateShoeForm = () => {
-  const [submitState, setSubmitState] = useState({
-    error: false,
-    submitStatus: false
-  })
   const [state, dispatch] = useStateValue()
   const navigate = useNavigate()
 
+  const initialValue = {
+    shoe_image: undefined,
+    name: "",
+    color: "",
+    price: 0,
+    gender: Gender.MALE,
+    age: Age.ADULT,
+    sizes: [{
+      size: 0,
+      quantity: 0
+    }]
+  }
+
   const onSubmit = async (fields:ShoeData) => {
+    loadingAlert({
+      message: 'Submitting info. Please wait...',
+      dispatchObj: dispatch
+    })
+
     console.log("ON SUBMIT ", fields)
     const token = state.token
     let url = pathToDefault
@@ -25,16 +38,6 @@ const CreateShoeForm = () => {
       dispatch({ type: 'SIGN_OUT' })
       return navigate('/signin', { replace: true, state: { from: location } } )
     }
-
-    setSubmitState({
-      error: false,
-      submitStatus: true
-    })
-
-    loadingAlert({
-      message: 'Submitting info. Please wait...',
-      dispatchObj: dispatch
-    })
 
     //if image was uploaded, then check to see if you can save it and save the url
     if(fields.shoe_image instanceof File){
@@ -63,15 +66,10 @@ const CreateShoeForm = () => {
         dispatchObj: dispatch
       })
     }
-   
-    setSubmitState({
-      error: true,
-      submitStatus: false
-    })
   }
 
   return (
-    <ShoeForm submitState={submitState} onSubmit={onSubmit} data={null}/>
+    <ShoeForm onSubmit={onSubmit} initialValue={initialValue}/>
   )
 }
 

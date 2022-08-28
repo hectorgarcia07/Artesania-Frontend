@@ -2,30 +2,20 @@ import { ShoeData, Shoe } from "../../../types"
 import ShoeServices from '../../../services/shoes'
 import { useStateValue } from "../../../state";
 import ShoeForm from "./ShoeForm";
-import { useState } from "react";
-import axios from "axios";
 import { useNavigate, useLocation } from 'react-router-dom'
 import { pathToDefault } from "../../../utils/pathToDefault";
 import { loadingAlert, errorAlert, successAlert } from "../../../utils/AlertsUtils";
 
 const EditShoeForm = ({shoeData}:{shoeData: Shoe}) => {
-  const [submitState, setSubmitState] = useState({
-    error: false,
-    submitStatus: false
-  })
   const [state, dispatch] = useStateValue()
   const navigate = useNavigate()
   const location = useLocation()
 
   const {url: oldUrl, id, ...restOfData} = shoeData
-  const shoeDataToModify = {...restOfData, shoe_image: undefined}
+  const initialValue = {...restOfData, shoe_image: undefined}
 
   const onSubmit = async (fields:ShoeData) => {
     console.log("Submitting ")
-    setSubmitState({
-      error: false,
-      submitStatus: true
-    })
 
     loadingAlert({
       message: 'Submitting info. Please wait...',
@@ -72,14 +62,13 @@ const EditShoeForm = ({shoeData}:{shoeData: Shoe}) => {
         dispatchObj: dispatch
       })
 
-      setSubmitState({ error: true, submitStatus: false })
       dispatch({ type: 'SIGN_OUT' })
       navigate('/signin', {replace: true, state: {from: location, data: shoeData}} )
     }
   }
 
   return (
-    <ShoeForm submitState={submitState} onSubmit={onSubmit} data={shoeDataToModify}/>
+    <ShoeForm onSubmit={onSubmit} initialValue={initialValue}/>
   )
 }
 

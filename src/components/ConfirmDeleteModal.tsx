@@ -21,20 +21,18 @@ const style = {
 };
 
 interface ModalProps{
-  children: React.ReactNode,
-  value: Omit<Size, "id">,
-  description: string
+  onClickMethod: () => unknown;
+  description: string;
 }
 
-export default function TransitionsModal({children, value, description}: ModalProps) {
+export default function ConfirmDeleteModal({ onClickMethod , description}: ModalProps) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  console.log(' CHECKING FOR RE RENDER ', value)
 
   return (
     <div>
-      <Button onClick={handleOpen} variant="outlined" color='error'>{description}</Button>
+      <Button sx={{ mb: '1rem' }} onClick={handleOpen} variant="outlined" color='error'>{description}</Button>
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
@@ -52,8 +50,17 @@ export default function TransitionsModal({children, value, description}: ModalPr
               Are you sure you want to delete this?
             </Typography>
             <Box id="transition-modal-description" sx={{ mt: 2 }}>
-              <Button variant="contained" onClick={handleClose}>Cancel</Button>
-              {children}
+              <Button variant="contained" onClick={handleClose} sx={{ mr: '1rem' }}>Cancel</Button>
+              <Button 
+                variant="contained" 
+                color="error" 
+                onClick={() => {  
+                  onClickMethod()
+                  handleClose()
+                }}
+              >
+                Delete
+              </Button>
             </Box>
           </Box>
         </Fade>

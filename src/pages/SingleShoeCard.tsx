@@ -8,7 +8,7 @@ import { useStateValue } from '../state';
 import { JSXElementConstructor, Key, ReactElement, ReactFragment, ReactPortal } from 'react';
 import ShoeService from '../services/shoes' 
 import { useNavigate } from 'react-router-dom';
-import ConfirmationBtn from '../components/ConfirmationBtn'
+import ConfirmationBtn from '../components/ConfirmDeleteModal'
 import { successAlert, errorAlert } from '../utils/AlertsUtils'
 
 const SingleShoeCard = ({singleShoeData}:{singleShoeData: Shoe}) => {
@@ -125,12 +125,10 @@ const SingleShoeCard = ({singleShoeData}:{singleShoeData: Shoe}) => {
               Update Shoe Data
             </Button>
           </Link>
-          <ConfirmationBtn value={singleShoeData.sizes[0]} description={"Delete shoe information and size"}>
-            <Button sx={{color: "red"}} 
-              onClick={deleteShoe}>
-              Delete
-            </Button>
-          </ConfirmationBtn>
+          <ConfirmationBtn 
+            onClickMethod={ () => deleteShoe() } 
+            description={"Delete shoe information and size"} 
+          />
         </CardContent>
       </Card>
     </Container>

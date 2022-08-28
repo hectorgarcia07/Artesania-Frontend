@@ -1,4 +1,4 @@
-import ConfirmationBtn from './ConfirmationBtn'
+import ConfirmationBtn from './ConfirmDeleteModal'
 import Navbar from './Navbar'
 import ProtectedRoute from './ProtectedRoutes'
 import ShoeList from './ShoeList'
